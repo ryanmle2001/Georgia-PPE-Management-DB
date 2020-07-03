@@ -20,7 +20,8 @@ CREATE TABLE `business` (
   `name` char(20) NOT NULL PRIMARY KEY,
   `street` char(20) NOT NULL,
   `city` char(20) NOT NULL,
-  `zip` decimal(6,0) NOT NULL
+  `zip` decimal(6,0) NOT NULL,
+  UNIQUE KEY (`street`, `city`, `zip`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `hospital` (
