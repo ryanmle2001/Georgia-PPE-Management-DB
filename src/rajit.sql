@@ -3,7 +3,7 @@
 -- Phase II Create Table and Insert Statements Template
 
 -- Team XX
--- Team Member Name (GT username)
+-- Rajit Khanna (rkhanna38)
 -- Team Member Name (GT username)
 -- Team Member Name (GT username)
 -- Team Member Name (GT username)
