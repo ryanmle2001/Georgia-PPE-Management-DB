@@ -2,11 +2,11 @@
 -- Summer 2020
 -- Phase II Create Table and Insert Statements Template
 
--- Team XX
--- Team Member Name (GT username)
--- Team Member Name (GT username)
--- Team Member Name (GT username)
--- Team Member Name (GT username)
+-- Team 15
+-- Rajit Khanna (rkhanna38)
+-- Ryan Le (rm331)
+-- Saatvik Korisepati (skorisepati3)
+-- Andrew Zhao (azhao63)
 
 -- Directions:
 -- Please follow all instructions from the Phase II assignment PDF.
