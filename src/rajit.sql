@@ -15,7 +15,7 @@
 -- Rename file to cs4400_phase2_teamX.sql before submission
 
 -- CREATE TABLE STATEMENTS BELOW
-
+DROP TABLE IF EXISTS BUSINESS;
 CREATE TABLE BUSINESS (
   business_name varchar(1) NOT NULL PRIMARY KEY,
   street varchar(1) NOT NULL,
@@ -24,6 +24,7 @@ CREATE TABLE BUSINESS (
   UNIQUE KEY (street, city, zip)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+DROP TABLE IF EXISTS HOSPITAL;
 CREATE TABLE HOSPITAL (
   hospital_name varchar(1) NOT NULL PRIMARY KEY,
   max_doctors decimal(2,0) NOT NULL,
@@ -31,13 +32,12 @@ CREATE TABLE HOSPITAL (
   CONSTRAINT hospital_ibfk_1 FOREIGN KEY (hospital_name) REFERENCES business (business_name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+DROP TABLE IF EXISTS MANUFACTURER;
 CREATE TABLE MANUFACTURER (
   manufacturer_name varchar(1) NOT NULL PRIMARY KEY,
   catalog_capacity decimal(5,0) NOT NULL,
   CONSTRAINT manufacturer_ibfk_1 FOREIGN KEY (manufacturer_name) REFERENCES business (business_name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-
 
 
 -- INSERT STATEMENTS BELOW
