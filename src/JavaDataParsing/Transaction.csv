@@ -1,0 +1,38 @@
+Transaction_ID,Date,Hospital,Manufacturer,prod_id,Count
+0001,3/10/2020,Children's Healthcare of Atlanta,PPE Empire,WHMSK,500
+0001,3/10/2020,Children's Healthcare of Atlanta,PPE Empire,BLMSK,500
+0002,3/10/2020,Children's Healthcare of Atlanta,"Buy Personal Protective Equipment, Inc",BLSHC,300
+0003,3/10/2020,Emory Midtown,Healthcare Supplies of Atlanta,BLMSK,500
+0004,3/10/2020,Grady Hospital,Healthcare Supplies of Atlanta,ORGOG,150
+0004,3/10/2020,Grady Hospital,Healthcare Supplies of Atlanta,RDMSK,150
+0004,3/10/2020,Grady Hospital,Healthcare Supplies of Atlanta,CLSHD,200
+0004,3/10/2020,Grady Hospital,Healthcare Supplies of Atlanta,BLSHC,100
+0005,3/10/2020,Northside Hospital,Healthcare Supplies of Atlanta,WHMSK,300
+0006,3/10/2020,Children's Healthcare of Atlanta,"Buy Personal Protective Equipment, Inc",BLSHC,400
+0007,3/10/2020,Piedmont Hospital,Marietta Mask Production Company,GRMSK,100
+0007,3/10/2020,Piedmont Hospital,Marietta Mask Production Company,GRGOG,300
+0008,5/1/2020,Northside Hospital,Georgia Tech Protection Lab,ORGOG,200
+0008,5/1/2020,Northside Hospital,Georgia Tech Protection Lab,WHGOG,200
+0009,5/1/2020,Children's Healthcare of Atlanta,Marietta Mask Production Company,GRSHC,500
+0009,5/1/2020,Children's Healthcare of Atlanta,Marietta Mask Production Company,GRHOD,500
+0010,5/1/2020,Northside Hospital,S&J Corporation,WHGLO,500
+0011,5/1/2020,Northside Hospital,"Buy Personal Protective Equipment, Inc",WHHOD,200
+0011,5/1/2020,Northside Hospital,"Buy Personal Protective Equipment, Inc",WHGWN,200
+0012,5/25/2020,Emory Midtown,"Buy Personal Protective Equipment, Inc",BLSHC,50
+0013,5/25/2020,Children's Healthcare of Atlanta,Healthcare Supplies of Atlanta,BLHOD,100
+0013,5/25/2020,Children's Healthcare of Atlanta,Healthcare Supplies of Atlanta,BLGWN,100
+0014,5/25/2020,Emory Midtown,PPE Empire,WHRES,300
+0014,5/25/2020,Emory Midtown,PPE Empire,YLRES,200
+0014,5/25/2020,Emory Midtown,PPE Empire,ORRES,300
+0015,5/25/2020,Emory Midtown,"Buy Personal Protective Equipment, Inc",GYGWN,50
+0016,5/25/2020,Northside Hospital,Healthcare Supplies of Atlanta,CLSHD,20
+0016,5/25/2020,Northside Hospital,Healthcare Supplies of Atlanta,ORGOG,300
+0016,5/25/2020,Northside Hospital,Healthcare Supplies of Atlanta,BLHOD,100
+0017,6/3/2020,Grady Hospital,Healthcare Supplies of Atlanta,RDMSK,200
+0017,6/3/2020,Grady Hospital,Healthcare Supplies of Atlanta,CLSHD,180
+0018,6/3/2020,Grady Hospital,"Buy Personal Protective Equipment, Inc",WHHOD,500
+0019,6/3/2020,Grady Hospital,"Buy Personal Protective Equipment, Inc",GYGWN,300
+0020,6/3/2020,Piedmont Hospital,S&J Corporation,BKSTE,50
+0020,6/3/2020,Piedmont Hospital,S&J Corporation,WHSTE,50
+0021,6/4/2020,Piedmont Hospital,Georgia Tech Protection Lab,CLSHD,100
+0021,6/4/2020,Piedmont Hospital,Georgia Tech Protection Lab,ORGOG,200

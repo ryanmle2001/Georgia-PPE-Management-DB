@@ -1,0 +1,47 @@
+Manufacturer,prod_id,Price
+PPE Empire,WHMSK, $1.25 
+PPE Empire,BLMSK, $1.35 
+PPE Empire,RDMSK, $1.30 
+PPE Empire,GRMSK, $1.45 
+PPE Empire,WHRES, $4.80 
+PPE Empire,YLRES, $5.10 
+PPE Empire,ORRES, $4.50 
+"Buy Personal Protective Equipment, Inc",BLSHC, $0.90 
+"Buy Personal Protective Equipment, Inc",BLHOD, $2.10 
+"Buy Personal Protective Equipment, Inc",BLGWN, $3.15 
+"Buy Personal Protective Equipment, Inc",GRSHC, $0.90 
+"Buy Personal Protective Equipment, Inc",GRHOD, $2.10 
+"Buy Personal Protective Equipment, Inc",GRGWN, $3.15 
+"Buy Personal Protective Equipment, Inc",GYSHC, $0.90 
+"Buy Personal Protective Equipment, Inc",GYHOD, $2.10 
+"Buy Personal Protective Equipment, Inc",GYGWN, $3.15 
+"Buy Personal Protective Equipment, Inc",WHSHC, $0.90 
+"Buy Personal Protective Equipment, Inc",WHHOD, $2.10 
+"Buy Personal Protective Equipment, Inc",WHGWN, $3.15 
+Healthcare Supplies of Atlanta,ORGOG, $3.00 
+Healthcare Supplies of Atlanta,RDMSK, $1.45 
+Healthcare Supplies of Atlanta,CLSHD, $6.05 
+Healthcare Supplies of Atlanta,BLSHC, $1.00 
+Healthcare Supplies of Atlanta,BLHOD, $2.00 
+Healthcare Supplies of Atlanta,BLGWN, $3.00 
+Healthcare Supplies of Atlanta,YLRES, $5.50 
+Healthcare Supplies of Atlanta,WHMSK, $1.10 
+Healthcare Supplies of Atlanta,BLMSK, $1.05 
+Georgia Tech Protection Lab,CLSHD, $5.95 
+Georgia Tech Protection Lab,ORGOG, $3.20 
+Georgia Tech Protection Lab,WHGOG, $3.20 
+Georgia Tech Protection Lab,BKGOG, $3.20 
+Georgia Tech Protection Lab,GYSHC, $0.75 
+Georgia Tech Protection Lab,GYHOD, $1.80 
+Georgia Tech Protection Lab,GYGWN, $3.25 
+Marietta Mask Production Company,GRSHC, $0.80 
+Marietta Mask Production Company,GRHOD, $1.65 
+Marietta Mask Production Company,GRGWN, $2.95 
+Marietta Mask Production Company,GRMSK, $1.25 
+Marietta Mask Production Company,GRGOG, $3.25 
+S&J Corporation,BKSTE, $5.20 
+S&J Corporation,WHSTE, $5.00 
+S&J Corporation,SISTE, $5.10 
+S&J Corporation,BKGLO, $0.30 
+S&J Corporation,WHGLO, $0.30 
+S&J Corporation,GRGLO, $0.30 
