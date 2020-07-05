@@ -31,22 +31,28 @@ public class InsertGenerator {
 
 	public static void products() {
 		try {
-			String tableName = "used_by";
+			/*String tableName = "used_by";
 			Scanner scan = new Scanner(new File("used_by.csv"));
-			PrintWriter pw = new PrintWriter("used_by_.txt");
+			PrintWriter pw = new PrintWriter("used_by_.txt");*/
+			String tableName = "user";
+			Scanner scan = new Scanner(new File("username.csv"));
+			PrintWriter pw = new PrintWriter("username_inserts.txt");
 			String insertStatement = "INSERT INTO " + tableName + " VALUES ";
 			scan.nextLine();
 			while(scan.hasNextLine()) {
 				insertStatement += "(";
 				String[] entities = scan.nextLine().split(",");
-				if (entities.length == 4) {
+				/*if (entities.length == 4) {
 					String[] newEntities = {"Buy Personal Protective Equipment, Inc", entities[2], entities[3]};
 					entities = newEntities;
-				}
+				}*/
 				if (scan.hasNextLine()) {
-					insertStatement += String.format("'%s','%s','%s'),", entities[0], entities[1], entities[2]);
+				/*	insertStatement += String.format("'%s','%s','%s'),", entities[0], entities[1], entities[2]);
 				} else {
-					insertStatement += String.format("'%s','%s','%s')", entities[0], entities[1], entities[2]);
+					insertStatement += String.format("'%s','%s','%s')", entities[0], entities[1], entities[2]);*/
+					insertStatement += String.format("'%s','%s',%s,'%s','%s'),", entities[0], entities[1], entities[2], entities[3], entities[4]);
+				} else {
+					insertStatement += String.format("'%s','%s',%s,'%s','%s')", entities[0], entities[1], entities[2], entities[3], entities[4]);
 				}
 			}
 			insertStatement += ";";

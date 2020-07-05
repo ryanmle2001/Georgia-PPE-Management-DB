@@ -23,7 +23,6 @@ USE ppe_management;
 DROP TABLE IF EXISTS product;
 CREATE TABLE product (
 	p_id char(5) not null,
-	name varchar(100) not null, 
 	type varchar(100) not null, 
 	color varchar(100) not null, 
 	primary key (p_id)
@@ -65,6 +64,8 @@ CREATE TABLE user_account (
   PRIMARY KEY (username),
   UNIQUE KEY (email)
 ) ENGINE=InnoDB;
+
+INSERT INTO user VALUES ('drCS4400','cs4400@gatech.edu',30003000,'Computer','Science'),('doctor_moss','mmoss7@gatech.edu',12341234,'Mark','Moss'),('drmcdaniel','mcdaniel@cc.gatech.edu',12345678,'Melinda','McDaniel'),('musaev_doc','aibek.musaev@gatech.edu',87654321,'Aibek','Musaev'),('doctor1','doctor1@gatech.edu',10001000,'Doctor','One'),('doctor2','doctor2@gatech.edu',20002000,'Doctor','Two'),('fantastic','ninth_doctor@gatech.edu',99999999,'Chris','Eccleston'),('allons_y','tenth_doctor@gatech.edu',10101010,'David','Tennant'),('bow_ties _are_cool','eleventh_doctor@gatech.edu',11111111,'Matt','Smith'),('sonic_shades','twelfth_doctor@gatech.edu',12121212,'Peter','Capaldi'),('mcdreamy','dr_shepard@gatech.edu',13311332,'Derek','Shepard'),('grey_jr','dr_grey@gatech.edu',87878787,'Meredith','Shepard'),('young_doc','howser@gatech.edu',80088008,'Doogie','Howser'),('dr_dolittle','dog_doc@gatech.edu',37377373,'John','Dolittle'),('bones','doctor_mccoy@gatech.edu',11223344,'Leonard','McCoy'),('doc_in_da_house','tv_doctor@gatech.edu',30854124,'Gregory','House'),('jekyll_not_hyde','jekyll1886@gatech.edu',56775213,'Henry','Jekyll'),('drake_remoray ','f_r_i_e_n_d_s@gatech.edu',24598543,'Joey','Tribbiani'),('Jones01','jones01@gatech.edu',52935481,'Johnes','Boys'),('hannah_hills','managerEHH@gatech.edu',13485102,'Hannah','Hills'),('henryjk','HenryJK@gatech.edu',54238912,'Henry','Kims'),('aziz_01','ehh01@gatech.edu',90821348,'Amit','Aziz'),('dr_mory','JackMM@gatech.edu',12093015,'Jack','Mory'),('ppee_admin','ppee_admin@gatech.edu',27536292,'Admin','One'),('bppe_admin','bppe_admin@gatech.edu',35045790,'Admin','Two'),('hsa_admin','hsa_admin@gatech.edu',75733271,'Jennifer','Tree'),('gtpl_admin','gtpl_admin@gatech.edu',14506524,'Shaundra','Apple'),('mmpc_admin','mmpc_admin@gatech.edu',22193897,'Nicholas','Cage'),('sjc_admin','sjc_admin@gatech.edu',74454118,'Trey','Germs'),('choa_admin','choa_admin@gatech.edu',62469488,'Addison','Ambulance'),('piedmont_admin','piedmont_admin@gatech.edu',36846830,'Rohan','Right'),('northside_admin','northside_admin@gatech.edu',38613312,'Johnathan','Smith'),('emory_admin','emory_admin@gatech.edu',33202257,'Elizabeth','Tucker'),('grady_admin','grady_admin@gatech.edu',67181125,'Taylor','Booker'),('Burdell','GeorgeBurdell@gatech.edu',12345678,'George','Burdell'),('Buzz','THWG@gatech.edu',98765432,'Buzz','Tech');
 
 DROP TABLE IF EXISTS doctor;
 CREATE TABLE doctor (
@@ -111,7 +112,7 @@ CREATE TABLE inventory (
 	street varchar(100) not null, 
 	city varchar(100) not null, 
 	state varchar(100) not null, 
-	zip varchar(100) not null,
+	zip decimal(5,0) not null,
 	primary key (business_name),
 	constraint inventory_ibfk_1 foreign key (business_name) references business (business_name)
 ) engine = InnoDB;
