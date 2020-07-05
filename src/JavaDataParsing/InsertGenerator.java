@@ -3,7 +3,7 @@ import java.io.*;
 public class InsertGenerator {
 
 	public static void main(String[] args) {
-		products();
+		usedBy();
 	}
 
 	public static void horztovert() {
@@ -26,6 +26,66 @@ public class InsertGenerator {
 			pw.close();
 		}	catch (FileNotFoundException e) {
 			System.out.println(e);
+		}
+	}
+
+	public static void hasItem() {
+		try {
+			String tableName = "has_item";
+			Scanner scan = new Scanner(new File("has_item.csv"));
+			PrintWriter pw = new PrintWriter("has_item_inserts.txt");
+			String insertStatement = "INSERT INTO " + tableName + " VALUES ";
+			scan.nextLine();
+			while(scan.hasNextLine()) {
+				insertStatement += "(";
+				String[] entities = scan.nextLine().split(",");
+				if (entities.length == 4) {
+					String[] newEntities = {"Buy Personal Protective Equipment, Inc", entities[2], entities[3]};
+					entities = newEntities;
+				}
+				if (scan.hasNextLine()) {
+					insertStatement += String.format("'%s','%s',%s),", entities[0], entities[1], entities[2]);
+				} else {
+					insertStatement += String.format("'%s','%s',%s)", entities[0], entities[1], entities[2]);
+				}
+			}
+			insertStatement += ";";
+			pw.print(insertStatement);
+			pw.close();
+		} catch (FileNotFoundException e) {
+			System.out.println(e);
+		} finally {
+			// scan.close();
+		}
+	}
+
+	public static void usedBy() {
+		try {
+			String tableName = "used_by";
+			Scanner scan = new Scanner(new File("used_by.csv"));
+			PrintWriter pw = new PrintWriter("used_by_inserts.txt");
+			String insertStatement = "INSERT INTO " + tableName + " VALUES ";
+			scan.nextLine();
+			while(scan.hasNextLine()) {
+				insertStatement += "(";
+				String[] entities = scan.nextLine().split(",");
+				if (entities.length == 4) {
+					String[] newEntities = {"Buy Personal Protective Equipment, Inc", entities[2], entities[3]};
+					entities = newEntities;
+				}
+				if (scan.hasNextLine()) {
+					insertStatement += String.format("'%s',%s,%s),", entities[0], entities[1], entities[2]);
+				} else {
+					insertStatement += String.format("'%s',%s,%s)", entities[0], entities[1], entities[2]);
+				}
+			}
+			insertStatement += ";";
+			pw.print(insertStatement);
+			pw.close();
+		} catch (FileNotFoundException e) {
+			System.out.println(e);
+		} finally {
+			// scan.close();
 		}
 	}
 
