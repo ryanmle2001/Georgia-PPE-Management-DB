@@ -3,14 +3,37 @@ import java.io.*;
 public class InsertGenerator {
 
 	public static void main(String[] args) {
-		transactionAndContains();
+		products();
 	}
 
-	public static void catalogItem() {
+	public static void horztovert() {
+		try{
+			Scanner scan = new Scanner(new File("usage_horz.csv"));
+			PrintWriter pw = new PrintWriter("usage_vert.txt");
+			scan.nextLine();
+			while(scan.hasNextLine()) {
+				String line = scan.nextLine();
+				String id = line.substring(0,7);
+				String[] entities = line.substring(7).split("\\), \\(");
+				for (int i = 0; i < entities.length; i++){
+					id = id.replaceAll("\"","");
+					entities[i] = entities[i].replaceAll("\"","");
+					entities[i] = entities[i].replaceAll("\\)","");
+					entities[i] = entities[i].replaceAll("\\(","");
+					pw.print(id + entities[i].replaceAll("\"","") + '\n');
+				}
+			}
+			pw.close();
+		}	catch (FileNotFoundException e) {
+			System.out.println(e);
+		}
+	}
+
+	public static void products() {
 		try {
-			String tableName = "catalog_item";
-			Scanner scan = new Scanner(new File("CatalogItem.csv"));
-			PrintWriter pw = new PrintWriter("catalog_item_inserts.txt");
+			String tableName = "used_by";
+			Scanner scan = new Scanner(new File("used_by.csv"));
+			PrintWriter pw = new PrintWriter("used_by_.txt");
 			String insertStatement = "INSERT INTO " + tableName + " VALUES ";
 			scan.nextLine();
 			while(scan.hasNextLine()) {
@@ -21,9 +44,9 @@ public class InsertGenerator {
 					entities = newEntities;
 				}
 				if (scan.hasNextLine()) {
-					insertStatement += String.format("'%s','%s',%s),", entities[1], entities[0], entities[2].trim().substring(1));
+					insertStatement += String.format("'%s','%s','%s'),", entities[0], entities[1], entities[2]);
 				} else {
-					insertStatement += String.format("'%s','%s',%s)", entities[1], entities[0], entities[2].trim().substring(1));
+					insertStatement += String.format("'%s','%s','%s')", entities[0], entities[1], entities[2]);
 				}
 			}
 			insertStatement += ";";
