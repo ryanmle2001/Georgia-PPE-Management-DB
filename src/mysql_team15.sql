@@ -23,7 +23,6 @@ USE ppe_management;
 DROP TABLE IF EXISTS product;
 CREATE TABLE product (
 	p_id char(5) not null,
-	name varchar(100) not null, 
 	type varchar(100) not null, 
 	color varchar(100) not null, 
 	primary key (p_id)
@@ -111,7 +110,7 @@ CREATE TABLE inventory (
 	street varchar(100) not null, 
 	city varchar(100) not null, 
 	state varchar(100) not null, 
-	zip varchar(100) not null,
+	zip decimal(5,0) not null,
 	primary key (business_name),
 	constraint inventory_ibfk_1 foreign key (business_name) references business (business_name)
 ) engine = InnoDB;
