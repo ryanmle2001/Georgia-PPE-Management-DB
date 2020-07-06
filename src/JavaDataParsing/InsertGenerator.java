@@ -3,7 +3,7 @@ import java.io.*;
 public class InsertGenerator {
 
 	public static void main(String[] args) {
-		usedBy();
+		transactionAndContains();
 	}
 
 	public static void horztovert() {
@@ -183,6 +183,6 @@ public class InsertGenerator {
 		while (dateParts[2].length() < 4) {
 			dateParts[2] = "0" + dateParts[2];
 		}
-		return dateParts[0] + "-" + dateParts[1] + "-" + dateParts[2];
+		return dateParts[2] + "-" + dateParts[0]+ "-" + dateParts[1];
 	}
 }
