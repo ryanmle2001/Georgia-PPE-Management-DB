@@ -222,14 +222,43 @@ INSERT INTO MANUFACTURER VALUES
 ("Marietta Mask Production Company", 15),
 ("S&J Corporation", 22);
 
-INSERT INTO user_account VALUES 
+INSERT INTO user_account VALUES
 ('drCS4400','cs4400@gatech.edu',30003000,'Computer','Science'),
 ('doctor_moss','mmoss7@gatech.edu',12341234,'Mark','Moss'),
 ('drmcdaniel','mcdaniel@cc.gatech.edu',12345678,'Melinda','McDaniel'),
 ('musaev_doc','aibek.musaev@gatech.edu',87654321,'Aibek','Musaev'),
 ('doctor1','doctor1@gatech.edu',10001000,'Doctor','One'),
 ('doctor2','doctor2@gatech.edu',20002000,'Doctor','Two'),
-('fantastic','ninth_doctor@gatech.edu',99999999,'Chris','Eccleston'),('allons_y','tenth_doctor@gatech.edu',10101010,'David','Tennant'),('bow_ties _are_cool','eleventh_doctor@gatech.edu',11111111,'Matt','Smith'),('sonic_shades','twelfth_doctor@gatech.edu',12121212,'Peter','Capaldi'),('mcdreamy','dr_shepard@gatech.edu',13311332,'Derek','Shepard'),('grey_jr','dr_grey@gatech.edu',87878787,'Meredith','Shepard'),('young_doc','howser@gatech.edu',80088008,'Doogie','Howser'),('dr_dolittle','dog_doc@gatech.edu',37377373,'John','Dolittle'),('bones','doctor_mccoy@gatech.edu',11223344,'Leonard','McCoy'),('doc_in_da_house','tv_doctor@gatech.edu',30854124,'Gregory','House'),('jekyll_not_hyde','jekyll1886@gatech.edu',56775213,'Henry','Jekyll'),('drake_remoray ','f_r_i_e_n_d_s@gatech.edu',24598543,'Joey','Tribbiani'),('Jones01','jones01@gatech.edu',52935481,'Johnes','Boys'),('hannah_hills','managerEHH@gatech.edu',13485102,'Hannah','Hills'),('henryjk','HenryJK@gatech.edu',54238912,'Henry','Kims'),('aziz_01','ehh01@gatech.edu',90821348,'Amit','Aziz'),('dr_mory','JackMM@gatech.edu',12093015,'Jack','Mory'),('ppee_admin','ppee_admin@gatech.edu',27536292,'Admin','One'),('bppe_admin','bppe_admin@gatech.edu',35045790,'Admin','Two'),('hsa_admin','hsa_admin@gatech.edu',75733271,'Jennifer','Tree'),('gtpl_admin','gtpl_admin@gatech.edu',14506524,'Shaundra','Apple'),('mmpc_admin','mmpc_admin@gatech.edu',22193897,'Nicholas','Cage'),('sjc_admin','sjc_admin@gatech.edu',74454118,'Trey','Germs'),('choa_admin','choa_admin@gatech.edu',62469488,'Addison','Ambulance'),('piedmont_admin','piedmont_admin@gatech.edu',36846830,'Rohan','Right'),('northside_admin','northside_admin@gatech.edu',38613312,'Johnathan','Smith'),('emory_admin','emory_admin@gatech.edu',33202257,'Elizabeth','Tucker'),('grady_admin','grady_admin@gatech.edu',67181125,'Taylor','Booker'),('Burdell','GeorgeBurdell@gatech.edu',12345678,'George','Burdell'),('Buzz','THWG@gatech.edu',98765432,'Buzz','Tech');
+('fantastic','ninth_doctor@gatech.edu',99999999,'Chris','Eccleston'),
+('allons_y','tenth_doctor@gatech.edu',10101010,'David','Tennant'),
+('bow_ties _are_cool','eleventh_doctor@gatech.edu',11111111,'Matt','Smith'),
+('sonic_shades','twelfth_doctor@gatech.edu',12121212,'Peter','Capaldi'),
+('mcdreamy','dr_shepard@gatech.edu',13311332,'Derek','Shepard'),
+('grey_jr','dr_grey@gatech.edu',87878787,'Meredith','Shepard'),
+('young_doc','howser@gatech.edu',80088008,'Doogie','Howser'),
+('dr_dolittle','dog_doc@gatech.edu',37377373,'John','Dolittle'),
+('bones','doctor_mccoy@gatech.edu',11223344,'Leonard','McCoy'),
+('doc_in_da_house','tv_doctor@gatech.edu',30854124,'Gregory','House'),
+('jekyll_not_hyde','jekyll1886@gatech.edu',56775213,'Henry','Jekyll'),
+('drake_remoray ','f_r_i_e_n_d_s@gatech.edu',24598543,'Joey','Tribbiani'),
+('Jones01','jones01@gatech.edu',52935481,'Johnes','Boys'),
+('hannah_hills','managerEHH@gatech.edu',13485102,'Hannah','Hills'),
+('henryjk','HenryJK@gatech.edu',54238912,'Henry','Kims'),
+('aziz_01','ehh01@gatech.edu',90821348,'Amit','Aziz'),
+('dr_mory','JackMM@gatech.edu',12093015,'Jack','Mory'),
+('ppee_admin','ppee_admin@gatech.edu',27536292,'Admin','One'),
+('bppe_admin','bppe_admin@gatech.edu',35045790,'Admin','Two'),
+('hsa_admin','hsa_admin@gatech.edu',75733271,'Jennifer','Tree'),
+('gtpl_admin','gtpl_admin@gatech.edu',14506524,'Shaundra','Apple'),
+('mmpc_admin','mmpc_admin@gatech.edu',22193897,'Nicholas','Cage'),
+('sjc_admin','sjc_admin@gatech.edu',74454118,'Trey','Germs'),
+('choa_admin','choa_admin@gatech.edu',62469488,'Addison','Ambulance'),
+('piedmont_admin','piedmont_admin@gatech.edu',36846830,'Rohan','Right'),
+('northside_admin','northside_admin@gatech.edu',38613312,'Johnathan','Smith'),
+('emory_admin','emory_admin@gatech.edu',33202257,'Elizabeth','Tucker'),
+('grady_admin','grady_admin@gatech.edu',67181125,'Taylor','Booker'),
+('Burdell','GeorgeBurdell@gatech.edu',12345678,'George','Burdell'),
+('Buzz','THWG@gatech.edu',98765432,'Buzz','Tech');
 
 -- INSERT INTO catalog_item VALUES ('WHMSK','PPE Empire',1.25),('BLMSK','PPE Empire',1.35),('RDMSK','PPE Empire',1.30),('GRMSK','PPE Empire',1.45),('WHRES','PPE Empire',4.80),('YLRES','PPE Empire',5.10),('ORRES','PPE Empire',4.50),('BLSHC','Buy Personal Protective Equipment, Inc',0.90),('BLHOD','Buy Personal Protective Equipment, Inc',2.10),('BLGWN','Buy Personal Protective Equipment, Inc',3.15),('GRSHC','Buy Personal Protective Equipment, Inc',0.90),('GRHOD','Buy Personal Protective Equipment, Inc',2.10),('GRGWN','Buy Personal Protective Equipment, Inc',3.15),('GYSHC','Buy Personal Protective Equipment, Inc',0.90),('GYHOD','Buy Personal Protective Equipment, Inc',2.10),('GYGWN','Buy Personal Protective Equipment, Inc',3.15),('WHSHC','Buy Personal Protective Equipment, Inc',0.90),('WHHOD','Buy Personal Protective Equipment, Inc',2.10),('WHGWN','Buy Personal Protective Equipment, Inc',3.15),('ORGOG','Healthcare Supplies of Atlanta',3.00),('RDMSK','Healthcare Supplies of Atlanta',1.45),('CLSHD','Healthcare Supplies of Atlanta',6.05),('BLSHC','Healthcare Supplies of Atlanta',1.00),('BLHOD','Healthcare Supplies of Atlanta',2.00),('BLGWN','Healthcare Supplies of Atlanta',3.00),('YLRES','Healthcare Supplies of Atlanta',5.50),('WHMSK','Healthcare Supplies of Atlanta',1.10),('BLMSK','Healthcare Supplies of Atlanta',1.05),('CLSHD','Georgia Tech Protection Lab',5.95),('ORGOG','Georgia Tech Protection Lab',3.20),('WHGOG','Georgia Tech Protection Lab',3.20),('BKGOG','Georgia Tech Protection Lab',3.20),('GYSHC','Georgia Tech Protection Lab',0.75),('GYHOD','Georgia Tech Protection Lab',1.80),('GYGWN','Georgia Tech Protection Lab',3.25),('GRSHC','Marietta Mask Production Company',0.80),('GRHOD','Marietta Mask Production Company',1.65),('GRGWN','Marietta Mask Production Company',2.95),('GRMSK','Marietta Mask Production Company',1.25),('GRGOG','Marietta Mask Production Company',3.25),('BKSTE','S&J Corporation',5.20),('WHSTE','S&J Corporation',5.00),('SISTE','S&J Corporation',5.10),('BKGLO','S&J Corporation',0.30),('WHGLO','S&J Corporation',0.30),('GRGLO','S&J Corporation',0.30);
 
