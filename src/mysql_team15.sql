@@ -36,7 +36,7 @@ CREATE TABLE business (
   state varchar(100) NOT NULL,
   zip decimal(5, 0) NOT NULL,
   PRIMARY KEY (business_name),
-  UNIQUE KEY (street, city, zip)
+  UNIQUE KEY (street, city, state, zip)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS hospital;
