@@ -48,7 +48,7 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS add_usage_log;
 DELIMITER //
 CREATE PROCEDURE add_usage_log(
-	IN i_usage_log_id CHAR(5), 
+	IN i_usage_log_id CHAR(5),
     IN i_doctor_username VARCHAR(100),
     IN i_timestamp TIMESTAMP
 )
@@ -65,7 +65,7 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS add_usage_log_entry;
 DELIMITER //
 CREATE PROCEDURE add_usage_log_entry(
-	IN i_usage_log_id CHAR(5), 
+	IN i_usage_log_id CHAR(5),
     IN i_product_id CHAR(5),
     IN i_count INT
 )
@@ -109,7 +109,7 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS add_transaction;
 DELIMITER //
 CREATE PROCEDURE add_transaction(
-	IN i_transaction_id CHAR(4), 
+	IN i_transaction_id CHAR(4),
     IN i_hospital VARCHAR(100),
     IN i_date DATE
 )
@@ -128,7 +128,7 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS add_transaction_item;
 DELIMITER //
 CREATE PROCEDURE add_transaction_item(
-    IN i_transactionId INT,
+    IN i_transactionId CHAR(4),
     IN i_productId CHAR(5),
     IN i_manufacturerName VARCHAR(100),
     IN i_purchaseCount INT)
@@ -177,7 +177,7 @@ BEGIN
 -- End of solution
 END //
 DELIMITER ;
-    
+
 -- Number: I8
 -- Author: ftsang3@
 -- Name: add_product
@@ -255,7 +255,7 @@ BEGIN
 
 -- End of solution
 END //
-DELIMITER ;	
+DELIMITER ;
 
 -- Number: D5
 -- Author: klin83@
@@ -288,7 +288,7 @@ CREATE PROCEDURE add_subtract_inventory(
 )
 BEGIN
 -- Type solution below
-    
+
 -- End of solution
 END //
 DELIMITER ;
@@ -428,7 +428,7 @@ DELIMITER ;
 
 /************** SELECTS **************/
 -- NOTE: "SELECT * FROM USER" is just a dummy query
--- to get the script to run. You will need to replace that line 
+-- to get the script to run. You will need to replace that line
 -- with your solution.
 
 -- Number: S1
@@ -472,7 +472,15 @@ BEGIN
 
     INSERT INTO num_of_admin_list_result
 -- Type solution below
-    SELECT * FROM User;
+    SELECT H.name, 'Hospital', count(*)
+    FROM Hospital AS H, Administrator AS A
+    WHERE name = business
+    GROUP BY H.name
+    UNION
+    SELECT M.name, 'Manufacturer', count(*)
+    FROM Manufacturer AS M, Administrator AS A
+    WHERE name = business
+    GROUP BY M.name;
 -- End of solution
 END //
 DELIMITER ;
@@ -659,7 +667,7 @@ DROP PROCEDURE IF EXISTS manufacturer_transaction_report;
 DELIMITER //
 CREATE PROCEDURE manufacturer_transaction_report(
     IN i_manufacturer VARCHAR(100))
-    
+
 BEGIN
     DROP TABLE IF EXISTS manufacturer_transaction_report_result;
     CREATE TABLE manufacturer_transaction_report_result(
@@ -676,7 +684,7 @@ BEGIN
 END //
 DELIMITER ;
 
--- Number:
+-- Number: S12
 -- Author: yxie@
 -- Name: get_user_types
 -- Tested By: yxie@
