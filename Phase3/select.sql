@@ -174,8 +174,12 @@ BEGIN
 
     INSERT INTO doctor_subordinate_usage_log_report_result
 -- Type solution below
-	SELECT * FROM User;
--- End of solution
+	select UsageLog.id as id, Doctor.username as doctor, UsageLog.timestamp as timestamp, UsageLogEntry.product_id, UsageLogEntry.count as count
+	from Doctor, UsageLog, UsageLogEntry
+	where (Doctor.manager = i_drUsername or Doctor.username = i_drUsername)
+	and Doctor.username = UsageLog.doctor
+	and UsageLog.id = UsageLogEntry.usage_log_id;
+    -- End of solution
 END //
 DELIMITER ;
 
@@ -195,7 +199,11 @@ BEGIN
 
     INSERT INTO explore_product_result
 -- Type solution below
-    SELECT * FROM User;
+	select CatalogItem.manufacturer as manufacturer, InventoryHasProduct.count as count, CatalogItem.price as price
+	from InventoryHasProduct 
+	join CatalogItem on InventoryHasProduct.inventory_business = CatalogItem.manufacturer
+	and InventoryHasProduct.product_id = CatalogItem.product_id
+	where InventoryHasProduct.product_id = i_product_id;
 -- End of solution
 END //
 DELIMITER ;
@@ -216,7 +224,19 @@ BEGIN
 
     INSERT INTO show_product_usage_result
 -- Type solution below
-	SELECT * FROM User;
+	select Inventory.product_id, sum(ifnull(UsageLog.count, 0)) as num_used, sum(ifnull(Inventory.count, 0)) as num_avaliable,  sum(ifnull(UsageLog.count, 0)) / sum(ifnull(Inventory.count, 0)) as ratio
+	from 
+	(select product_id, sum(count) as count 
+	from InventoryHasProduct
+	where inventory_business in (select distinct manufacturer from CatalogItem)
+	group by product_id
+	order by product_id) as Inventory
+	left outer join 
+	(select product_id, sum(count) as count 
+	from UsageLogEntry
+	group by product_id) as UsageLog
+	on Inventory.product_id = UsageLog.product_id
+	group by product_id; 
 -- End of solution
 END //
 DELIMITER ;
@@ -235,7 +255,12 @@ BEGIN
 
     INSERT INTO show_hospital_aggregate_usage_result
 -- Type solution below
-	SELECT * FROM User;
+	select Doctor.hospital, sum(UsageLogEntry.count) as products_used
+	from UsageLog 
+	join Doctor on Doctor.username = UsageLog.doctor
+	join UsageLogEntry on UsageLog.id = UsageLogEntry.usage_log_id
+	group by Doctor.hospital
+	order by Doctor.hospital asc; 
 -- End of solution
 END //
 DELIMITER ;
@@ -259,7 +284,12 @@ BEGIN
 
     INSERT INTO business_search_result
 -- Type solution below
-	SELECT * FROM User;
+	select * from Business
+	where (i_search_parameter = "name" and Business.name like concat("%",i_search_value,"%")) 
+	or (i_search_parameter = "street" and Business.address_street like concat("%",i_search_value,"%"))
+	or (i_search_parameter = "city" and Business.address_city like concat("%",i_search_value,"%"))
+	or (i_search_parameter = "state" and Business.address_state like concat("%",i_search_value,"%"))
+	or (i_search_parameter = "zip" and Business.address_zip like concat("%",i_search_value,"%"));
 -- End of solution
 END //
 DELIMITER ;
@@ -283,12 +313,17 @@ BEGIN
 
     INSERT INTO manufacturer_transaction_report_result
 -- Type solution below
-    SELECT * FROM User;
+	select TransactionItem.transaction_id as id, Transaction.hospital as hospital, sum(CatalogItem.price * TransactionItem.count) as cost, sum(TransactionItem.count) as total_count
+	from TransactionItem 
+	join Transaction on TransactionItem.transaction_id = Transaction.id
+	join CatalogItem on TransactionItem.product_id = CatalogItem.product_id and TransactionItem.manufacturer = CatalogItem.manufacturer
+	where TransactionItem.manufacturer = i_manufacturer
+	group by id;
 -- End of solution
 END //
 DELIMITER ;
 
--- Number:
+-- Number: S12
 -- Author: yxie@
 -- Name: get_user_types
 -- Tested By: yxie@
