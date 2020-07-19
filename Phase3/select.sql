@@ -123,8 +123,15 @@ BEGIN
 	where Transaction.id = TransactionItem.transaction_id
 	and CatalogItem.product_id = TransactionItem.product_id
 	and TransactionItem.manufacturer = CatalogItem.manufacturer
+<<<<<<< HEAD
 	group by hospitalName;
 -- End of solution
+=======
+	group by Transaction.id, hospitalName) as T
+	on Transaction.hospital = T.hospitalName and Transaction.id = T.id
+	group by Transaction.hospital;
+    -- End of solution
+>>>>>>> ryan
 END //
 DELIMITER ;
 

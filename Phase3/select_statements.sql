@@ -29,14 +29,22 @@ where Product.id = UsageLogEntry.product_id
 group by id
 order by num DESC;
 */
+
 /*
-select Transaction.hospital as hospitalName, sum(TransactionItem.count * CatalogItem.price) as totalExpenditure, count(*) as transaction_count, avg(TransactionItem.count * CatalogItem.price)
+select Transaction.hospital as hospitalName, sum(T.totalExpenditure) as totalExpenditure, count(*) as transaction_count, sum(T.totalExpenditure)/count(*) as avg_cost
+from Transaction join
+(select Transaction.id as id, Transaction.hospital as hospitalName, sum(TransactionItem.count * CatalogItem.price) as totalExpenditure
 from Transaction, TransactionItem, CatalogItem
 where Transaction.id = TransactionItem.transaction_id
 and CatalogItem.product_id = TransactionItem.product_id
 and TransactionItem.manufacturer = CatalogItem.manufacturer
+group by Transaction.id, hospitalName) as T
+on Transaction.hospital = T.hospitalName and Transaction.id = T.id
 group by hospitalName;
 */
+
+
+
 /*
 select Product.name_color, Product.name_type, CatalogItem.price, IFNULL(TransactionItem.count,0) as num_sold, CatalogItem.price * IFNULL(TransactionItem.count, 0) as revenue
 from CatalogItem
@@ -90,14 +98,14 @@ or (i_search_parameter = "city" and Business.address_city like concat("%",i_sear
 or (i_search_parameter = "state" and Business.address_state like concat("%",i_search_value,"%"))
 or (i_search_parameter = "zip" and Business.address_zip like concat("%",i_search_value,"%"));
 */
-/*
-select TransactionItem.transaction_id as id, Transaction.hospital as hospital, sum(CatalogItem.price * TransactionItem.count) as cost, sum(TransactionItem.count) as total_count
+
+select TransactionItem.transaction_id as id, Transaction.hospital as hospital, Transaction.date, sum(CatalogItem.price * TransactionItem.count) as cost, sum(TransactionItem.count) as total_count
 from TransactionItem 
 join Transaction on TransactionItem.transaction_id = Transaction.id
 join CatalogItem on TransactionItem.product_id = CatalogItem.product_id and TransactionItem.manufacturer = CatalogItem.manufacturer
 where TransactionItem.manufacturer = "PPE Empire"
-group by id;
-*/
+group by TransactionItem.transaction_id;
+
 
 select distinct username, UserType 
 from 
