@@ -24,16 +24,16 @@ This file must run without error for credit.
 DROP PROCEDURE IF EXISTS create_zero_inventory;
 DELIMITER //
 CREATE PROCEDURE create_zero_inventory(
-	IN i_businessName VARCHAR(100),
+    IN i_businessName VARCHAR(100),
     IN i_productId CHAR(5)
 )
 BEGIN
 -- Type solution below
-	IF (i_productId NOT IN (
-		SELECT product_id FROM InventoryHasProduct WHERE inventory_business = i_businessName))
+    IF (i_productId NOT IN (
+        SELECT product_id FROM InventoryHasProduct WHERE inventory_business = i_businessName))
     THEN INSERT INTO InventoryHasProduct (inventory_business, product_id, count)
-		VALUES (i_businessName, i_productId, 0);
-	END IF;
+        VALUES (i_businessName, i_productId, 0);
+    END IF;
 
 -- End of solution
 END //
@@ -48,20 +48,20 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS add_usage_log;
 DELIMITER //
 CREATE PROCEDURE add_usage_log(
-	IN i_usage_log_id CHAR(5),
+    IN i_usage_log_id CHAR(5),
     IN i_doctor_username VARCHAR(100),
     IN i_timestamp TIMESTAMP
 )
 BEGIN
 -- Type solution below
-	IF (i_usage_log_id NOT IN (
-		SELECT id FROM usagelog )
+    IF (i_usage_log_id NOT IN (
+        SELECT id FROM usagelog )
         AND
-        i_doctor_username NOT IN (
+        i_doctor_username IN (
         SELECT username FROM doctor))
     THEN INSERT INTO usagelog (id, doctor, timestamp)
-		VALUES (i_usage_log_id, i_doctor_username, i_timestamp);
-	END IF;
+        VALUES (i_usage_log_id, i_doctor_username, i_timestamp);
+    END IF;
 -- End of solution
 END //
 DELIMITER ;
@@ -72,29 +72,29 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS add_usage_log_entry;
 DELIMITER //
 CREATE PROCEDURE add_usage_log_entry(
-	IN i_usage_log_id CHAR(5),
+    IN i_usage_log_id CHAR(5),
     IN i_product_id CHAR(5),
     IN i_count INT
 )
 BEGIN
 -- Type solution below
-	IF (i_usage_log_id NOT IN (
-		SELECT id FROM usagelog )
+    IF (i_usage_log_id NOT IN (
+        SELECT id FROM usagelog )
         AND
         concat(i_usage_log_id, i_product_id) NOT IN (
         SELECT concat(usage_log_id, product_id) FROM usagelogentry)
         AND
-        count > (SELECT count FROM inventoryhasproduct WHERE 
-			(SELECT hospital FROM doctor WHERE username = (SELECT doctor FROM usagelog WHERE i_usage_log_id = id)) = inventory_business
-			AND
+        i_count < (SELECT count FROM inventoryhasproduct WHERE 
+            (SELECT username FROM doctor WHERE username = (SELECT doctor FROM usagelog WHERE i_usage_log_id = id))
+            AND
             i_product_id = product_id)
         )
     THEN INSERT INTO usagelog (id, doctor, timestamp)
-		VALUES (i_usage_log_id, i_doctor_username, i_timestamp);
+        VALUES (i_usage_log_id, i_doctor_username, i_timestamp);
         UPDATE inventoryhasproduct SET count = count - i_count WHERE 
-			(SELECT hospital FROM doctor WHERE username = (SELECT doctor FROM usagelog WHERE i_usage_log_id = id)) = inventory_business
-			AND i_product_id = product_id;
-	END IF;
+            (SELECT hospital FROM doctor WHERE username = (SELECT doctor FROM usage_log WHERE i_usage_log_id = id)) = inventory_business
+            AND i_product_id= product_id;
+    END IF;
 -- End of solution
 END //
 DELIMITER ;
@@ -105,7 +105,7 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS add_business;
 DELIMITER //
 CREATE PROCEDURE add_business(
-	IN i_name VARCHAR(100),
+    IN i_name VARCHAR(100),
     IN i_BusinessStreet VARCHAR(100),
     IN i_BusinessCity VARCHAR(100),
     IN i_BusinessState VARCHAR(30),
@@ -121,35 +121,35 @@ CREATE PROCEDURE add_business(
 )
 BEGIN
 -- Type solution below
-	IF (i_name NOT IN ( -- you may have to add not null statements here
-		SELECT name FROM business )
+    IF (i_name NOT IN ( -- you may have to add not null statements here
+        SELECT name FROM business )
         AND
         concat(i_BusinessStreet, i_BusinessCity, i_BusinessState, i_BusinessZip) NOT IN (
         SELECT concat(address_street, address_city, address_state, address_zip) FROM business)
         AND
         i_businessType = 'Hospital')
     THEN INSERT INTO business (name, address_street, address_city, address_state, address_zip)
-		VALUES (i_name, i_BusinessStreet, i_BusinessCity, i_BusinessState, i_BusinessZip);
+        VALUES (i_name, i_BusinessStreet, i_BusinessCity, i_BusinessState, i_BusinessZip);
         INSERT INTO hospital (name, max_doctors, budget)
         VALUES (i_name, i_maxDoctors, i_budget); 
         INSERT INTO invetory (owner, address_street, address_city, address_state, address_zip) -- you may have to add not null statements here
         VALUES (i_name, i_InventoryStreet, i_InventoryCity, i_InventoryState, i_InventoryZip);
-	END IF;
+    END IF;
     
     IF (i_name NOT IN ( -- you may have to add not null statements here
-		SELECT name FROM business )
+        SELECT name FROM business )
         AND
         concat(i_BusinessStreet, i_BusinessCity, i_BusinessState, i_BusinessZip) NOT IN (
         SELECT concat(address_street, address_city, address_state, address_zip) FROM business)
         AND
         i_businessType = 'Manufacturer')
     THEN INSERT INTO business (name, address_street, address_city, address_state, address_zip)
-		VALUES (i_name, i_BusinessStreet, i_BusinessCity, i_BusinessState, i_BusinessZip);
+        VALUES (i_name, i_BusinessStreet, i_BusinessCity, i_BusinessState, i_BusinessZip);
         INSERT INTO manufacturer (name, catalog_capacity)
         VALUES (i_name, i_catalog_capacity); 
         INSERT INTO invetory (owner, address_street, address_city, address_state, address_zip) -- you may have to add not null statements here
         VALUES (i_name, i_InventoryStreet, i_InventoryCity, i_InventoryState, i_InventoryZip);
-	END IF;
+    END IF;
 -- End of solution
 END //
 DELIMITER ;
@@ -160,7 +160,7 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS add_transaction;
 DELIMITER //
 CREATE PROCEDURE add_transaction(
-	IN i_transaction_id CHAR(4),
+    IN i_transaction_id CHAR(4),
     IN i_hospital VARCHAR(100),
     IN i_date DATE
 )
@@ -185,26 +185,34 @@ CREATE PROCEDURE add_transaction_item(
     IN i_purchaseCount INT)
 BEGIN
 -- Type solution below
-	IF ((concat(i_transactionId, i_productId, i_manufacturerName) NOT IN (
-        SELECT concat(transaction_id, product_id, manufacturer) FROM contains_item)) -- checking for duplicate entries
+    IF (
+        (concat(i_manufacturerName, i_productId) IN (SELECT concat(inventory_business, product_id) FROM inventoryhasproduct))
         AND
-        (i_transactionId IN (SELECT t_id FROM transactions)) -- checking if transaction is valid
+        (concat(i_transactionId, i_productId, i_manufacturerName) NOT IN (
+        SELECT concat(transaction_id, product_id, manufacturer) FROM transactionitem)) -- checking for duplicate entries
         AND
-        ((SELECT budget FROM hospital WHERE (SELECT hospital FROM transactions WHERE t_id = i_transactionId) = hospital_name) > -- checking if hospital can afford
-        ((SELECT price FROM catalog_item WHERE p_id = i_productId) * i_purchaseCount))
+        (((i_transactionId IN (SELECT id FROM transaction)) -- checking if empty transaction exists
         AND
-        (i_purchaseCount > (SELECT item_count FROM has_item WHERE p_id = i_productId AND business_name = i_manufacturerName)) -- checking if manufacturer has enough inventory
-        )
+        (i_transactionId NOT IN (SELECT transaction_id FROM transactionitem)))
+        OR
+        (concat(i_transactionId, i_manufacturerName) IN (SELECT concat(transaction_id, manufacturer) FROM transactionitem))) -- checks if transaction exists in transactionitem
+        AND
+        ((SELECT budget FROM hospital WHERE (SELECT hospital FROM transaction WHERE id = i_transactionId) = name) > -- checking if hospital can afford
+        ((SELECT price FROM catalogitem WHERE product_id = i_productId AND manufacturer = i_manufacturerName) * i_purchaseCount))
+        AND
+        (i_purchaseCount <= (SELECT count FROM inventoryhasproduct WHERE (product_id = i_productId AND inventory_business = i_manufacturerName))) -- checking if manufacturer has enough inventory
+         )
     THEN 
-		INSERT INTO contains_item (p_id, t_id, item_count, business_name)
-		VALUES (i_productId, i_transactionId, i_purchaseCount, i_manufacturerName);
-        UPDATE has_item SET item_count = item_count - i_purchaseCount 
-			WHERE i_manufacturerName = business_name AND i_productId = p_id;
-        UPDATE has_item SET item_count = item_count + i_purchaseCount 
-			WHERE (SELECT hospital FROM transactions WHERE t_id = i_transactionId) = hospital_name AND i_productId = p_id;
-        UPDATE hospital SET budget = budget - ((SELECT price FROM catalog_item WHERE p_id = i_productId) * i_purchaseCount) 
-			WHERE (SELECT hospital FROM transactions WHERE t_id = i_transactionId) = hospital_name;
-	END IF;
+        SELECT 'hello';
+        INSERT INTO transactionitem (product_id, transaction_id, count, manufacturer)
+        VALUES (i_productId, i_transactionId, i_purchaseCount, i_manufacturerName);
+        UPDATE inventoryhasproduct SET count = count - i_purchaseCount 
+            WHERE i_manufacturerName = inventory_business AND i_productId = product_id;
+        UPDATE inventoryhasproduct SET count = count + i_purchaseCount 
+            WHERE (SELECT hospital FROM transaction WHERE id = i_transactionId) = inventory_business AND i_productId = product_id;
+        UPDATE hospital SET budget = budget - ((SELECT price FROM catalogitem WHERE product_id = i_productId) * i_purchaseCount) 
+            WHERE (SELECT hospital FROM transaction WHERE id = i_transactionId) = name;
+    END IF;
 -- End of solution
 END //
 DELIMITER ;
@@ -215,7 +223,7 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS add_user;
 DELIMITER //
 CREATE PROCEDURE add_user(
-	IN i_username VARCHAR(100),
+    IN i_username VARCHAR(100),
     IN i_email VARCHAR(100),
     IN i_password VARCHAR(100),
     IN i_fname VARCHAR(50),
@@ -226,53 +234,63 @@ CREATE PROCEDURE add_user(
 )
 BEGIN
 -- Type solution below
-	IF (i_username NOT IN (
-		SELECT username FROM user )
+    IF (i_username NOT IN (
+        SELECT username FROM user )
         AND
         i_email NOT IN (
-        SELECT email FROM user))
-    THEN 
-		INSERT INTO user (username, email, password, fname, lname)
-		VALUES (i_username, i_email, SHA(i_password), i_fname, i_lname);
-			IF ((i_userType = 'Doctor') AND (i_workingHospital IN (SELECT name FROM hospital)))
-            THEN INSERT INTO doctor (username, hospital, manager)
-				VALUES (i_username, i_workingHospital, null); -- (SELECT username FROM administrator WHERE business = i_workingHospital)); -- this should auto null?, what about manager?
-			END IF;
-            IF ((i_userType = 'Admin') AND (i_managingBusiness IN (SELECT name FROM business))) 
-            THEN INSERT INTO administrator (username, business)
-				VALUES (i_username, i_workingHospital);
-			END IF;
-            IF ((i_userType = 'Doctor-Admin') AND (i_managingBusiness IN (SELECT name FROM business)) AND (i_workingHospital IN (SELECT name FROM hospital)))
-            THEN INSERT INTO doctor (username, hospital, manager)
-				VALUES (i_username, i_workingHospital, null); -- look at above comment
-                INSERT INTO administrator (username, business)
-				VALUES (i_username, i_workingHospital);
-			END IF;
-	END IF;
+        SELECT email FROM user)
+        )
+    THEN             
+        IF ((i_userType = 1) AND (i_workingHospital IN (SELECT name FROM hospital)))
+        THEN 
+        INSERT INTO user (username, email, password, fname, lname)
+        VALUES (i_username, i_email, SHA(i_password), i_fname, i_lname);
+        INSERT INTO doctor (username, hospital, manager)
+        VALUES (i_username, i_workingHospital, null); -- (SELECT username FROM administrator WHERE business = i_workingHospital)); -- this should auto null?, what about manager?
+        END IF;
+        
+        IF ((i_userType = 2) AND (i_managingBusiness IN (SELECT name FROM business))) 
+        THEN 
+        INSERT INTO user (username, email, password, fname, lname)
+        VALUES (i_username, i_email, SHA(i_password), i_fname, i_lname);
+        INSERT INTO administrator (username, business)
+            VALUES (i_username, i_managingBusiness);
+        END IF;
+        
+        IF ((i_userType = 3) AND (i_managingBusiness IN (SELECT name FROM business)) AND (i_workingHospital IN (SELECT name FROM hospital)))
+        THEN 
+        INSERT INTO user (username, email, password, fname, lname)
+        VALUES (i_username, i_email, SHA(i_password), i_fname, i_lname);
+        INSERT INTO doctor (username, hospital, manager)
+            VALUES (i_username, i_workingHospital, null); -- look at above comment
+            INSERT INTO administrator (username, business)
+            VALUES (i_username, i_managingBusiness);
+        END IF;
+    END IF;
 -- End of solution
 END //
 DELIMITER ;
 
 -- Number: I7
 -- Author: klin83@
--- Name: add_catalog_item
+-- Name: add_catalogitem
 DROP PROCEDURE IF EXISTS add_catalog_item;
 DELIMITER //
 CREATE PROCEDURE add_catalog_item(
     IN i_manufacturerName VARCHAR(100),
-	IN i_product_id CHAR(5),
+    IN i_product_id CHAR(5),
     IN i_price FLOAT(2)
 )
 BEGIN
 -- Type solution below
-	IF (i_manufacturerName IN (
-		SELECT name FROM manufacturer)
+    IF (i_manufacturerName IN (
+        SELECT name FROM manufacturer)
         AND
         (SELECT catalog_capacity FROM manufacturer WHERE i_manufacturerName = name) > 
         (SELECT count(product_id) FROM inventoryhasproduct WHERE i_manufacturerName = inventory_business))
     THEN INSERT INTO catalogitem (manufacturer, product_id, price)
-		VALUES (i_manufacturerName, i_product_id, i_price);
-	END IF;
+        VALUES (i_manufacturerName, i_product_id, i_price);
+    END IF;
 -- End of solution
 END //
 DELIMITER ;
@@ -283,20 +301,20 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS add_product;
 DELIMITER //
 CREATE PROCEDURE add_product(
-	IN i_prod_id CHAR(5),
+    IN i_prod_id CHAR(5),
     IN i_color VARCHAR(30),
     IN i_name VARCHAR(30)
 )
 BEGIN
 -- Type solution below
-	IF ((i_prod_id NOT IN (
-		SELECT id FROM product )) 
+    IF ((i_prod_id NOT IN (
+        SELECT id FROM product )) 
         AND 
         (concat(i_color, i_name) NOT IN (
         SELECT concat(name_color, name_type) FROM product)))
     THEN INSERT INTO product (id, name_color, name_type)
-		VALUES (i_prod_id, i_color, i_name);
-	END IF;
+        VALUES (i_prod_id, i_color, i_name);
+    END IF;
 -- End of solution
 END //
 DELIMITER ;
@@ -343,7 +361,7 @@ CREATE PROCEDURE delete_business(
 )
 BEGIN
 -- Type solution below
-	DELETE FROM Business where name = i_businessName;
+    DELETE FROM Business where name = i_businessName;
 -- End of solution
 END //
 DELIMITER ;
@@ -365,12 +383,12 @@ DELIMITER ;
 
 -- Number: D5
 -- Author: klin83@
--- Name: delete_catalog_item
-DROP PROCEDURE IF EXISTS delete_catalog_item;
+-- Name: delete_catalogitem
+DROP PROCEDURE IF EXISTS delete_catalogitem;
 DELIMITER //
-CREATE PROCEDURE delete_catalog_item(
+CREATE PROCEDURE delete_catalogitem(
     IN i_manufacturer_name VARCHAR(100),
-    IN i_product_id CHAR(5)
+    IN i_productransaction_id CHAR(5)
 )
 BEGIN
 -- Type solution below
@@ -388,7 +406,7 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS add_subtract_inventory;
 DELIMITER //
 CREATE PROCEDURE add_subtract_inventory(
-	IN i_prod_id CHAR(5),
+    IN i_prod_id CHAR(5),
     IN i_businessName VARCHAR(100),
     IN i_delta INT
 )
@@ -418,12 +436,12 @@ DELIMITER ;
 
 -- Number: U3
 -- Author: ty.zhang@
--- Name: rename_product_id
-DROP PROCEDURE IF EXISTS rename_product_id;
+-- Name: rename_productransaction_id
+DROP PROCEDURE IF EXISTS rename_productransaction_id;
 DELIMITER //
-CREATE PROCEDURE rename_product_id(
-    IN i_product_id CHAR(5),
-    IN i_new_product_id CHAR(5)
+CREATE PROCEDURE rename_productransaction_id(
+    IN i_productransaction_id CHAR(5),
+    IN i_new_productransaction_id CHAR(5)
 )
 BEGIN
 -- Type solution below
@@ -457,7 +475,7 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS charge_hospital;
 DELIMITER //
 CREATE PROCEDURE charge_hospital(
-    IN i_hospital_name VARCHAR(100),
+    IN i_name VARCHAR(100),
     IN i_amount FLOAT(2))
 BEGIN
 -- Type solution below
@@ -472,8 +490,8 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS update_business_admin;
 DELIMITER //
 CREATE PROCEDURE update_business_admin(
-	IN i_admin_username VARCHAR(100),
-	IN i_business_name VARCHAR(100)
+    IN i_admin_username VARCHAR(100),
+    IN i_name VARCHAR(100)
 )
 BEGIN
 -- Type solution below
@@ -495,8 +513,8 @@ BEGIN
 -- Type solution below
 IF i_doctor_username <> i_manager_username
     THEN
-		UPDATE Doctor SET manager = i_manager_username WHERE username = i_doctor_username;
-	END IF;
+        UPDATE Doctor SET manager = i_manager_username WHERE username = i_doctor_username;
+    END IF;
 -- End of solution
 END //
 DELIMITER ;
@@ -508,7 +526,7 @@ DROP PROCEDURE IF EXISTS update_user_password;
 DELIMITER //
 CREATE PROCEDURE update_user_password(
     IN i_username VARCHAR(100),
-	IN i_new_password VARCHAR(100)
+    IN i_new_password VARCHAR(100)
 )
 BEGIN
 -- Type solution below
@@ -519,10 +537,10 @@ DELIMITER ;
 
 -- Number: U9
 -- Author: klin83@
--- Name: batch_update_catalog_item
-DROP PROCEDURE IF EXISTS batch_update_catalog_item;
+-- Name: batch_update_catalogitem
+DROP PROCEDURE IF EXISTS batch_update_catalogitem;
 DELIMITER //
-CREATE PROCEDURE batch_update_catalog_item(
+CREATE PROCEDURE batch_update_catalogitem(
     IN i_manufacturer_name VARCHAR(100),
     IN i_factor FLOAT(2))
 BEGIN
@@ -539,26 +557,26 @@ DELIMITER ;
 
 -- Number: S1
 -- Author: ty.zhang@
--- Name: hospital_transactions_report
-DROP PROCEDURE IF EXISTS hospital_transactions_report;
+-- Name: hospital_transaction_report
+DROP PROCEDURE IF EXISTS hospital_transaction_report;
 DELIMITER //
-CREATE PROCEDURE hospital_transactions_report(
+CREATE PROCEDURE hospital_transaction_report(
     IN i_hospital VARCHAR(100),
     IN i_sortBy ENUM('', 'id', 'date'),
     IN i_sortDirection ENUM('', 'DESC', 'ASC')
 )
 BEGIN
-    DROP TABLE IF EXISTS hospital_transactions_report_result;
-    CREATE TABLE hospital_transactions_report_result(
+    DROP TABLE IF EXISTS hospital_transaction_report_result;
+    CREATE TABLE hospital_transaction_report_result(
         id CHAR(4),
         manufacturer VARCHAR(100),
         hospital VARCHAR(100),
         total_price FLOAT,
         date DATE);
 
-    INSERT INTO hospital_transactions_report_result
+    INSERT INTO hospital_transaction_report_result
 -- Type solution below
-	SELECT * FROM User;
+    SELECT * FROM User;
 -- End of solution
 END //
 DELIMITER ;
@@ -601,7 +619,7 @@ CREATE PROCEDURE product_usage_list()
 BEGIN
     DROP TABLE IF EXISTS product_usage_list_result;
     CREATE TABLE product_usage_list_result(
-        product_id CHAR(5),
+        productransaction_id CHAR(5),
         product_color VARCHAR(30),
         product_type VARCHAR(30),
         num INT);
@@ -630,7 +648,7 @@ BEGIN
 
     INSERT INTO hospital_total_expenditure_result
 -- Type solution below
-	SELECT * FROM User;
+    SELECT * FROM User;
 -- End of solution
 END //
 DELIMITER ;
@@ -653,7 +671,7 @@ BEGIN
 
     INSERT INTO manufacturer_catalog_report_result
 -- Type solution below
-	SELECT * FROM User;
+    SELECT * FROM User;
 -- End of solution
 END //
 DELIMITER ;
@@ -671,12 +689,12 @@ BEGIN
         id CHAR(5),
         doctor VARCHAR(100),
         timestamp TIMESTAMP,
-        product_id CHAR(5),
+        productransaction_id CHAR(5),
         count INT);
 
     INSERT INTO doctor_subordinate_usage_log_report_result
 -- Type solution below
-	SELECT * FROM User;
+    SELECT * FROM User;
 -- End of solution
 END //
 DELIMITER ;
@@ -687,7 +705,7 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS explore_product;
 DELIMITER //
 CREATE PROCEDURE explore_product(
-    IN i_product_id CHAR(5))
+    IN i_productransaction_id CHAR(5))
 BEGIN
     DROP TABLE IF EXISTS explore_product_result;
     CREATE TABLE explore_product_result(
@@ -711,14 +729,14 @@ CREATE PROCEDURE show_product_usage()
 BEGIN
     DROP TABLE IF EXISTS show_product_usage_result;
     CREATE TABLE show_product_usage_result(
-        product_id CHAR(5),
+        productransaction_id CHAR(5),
         num_used INT,
         num_available INT,
         ratio FLOAT);
 
     INSERT INTO show_product_usage_result
 -- Type solution below
-	SELECT * FROM User;
+    SELECT * FROM User;
 -- End of solution
 END //
 DELIMITER ;
@@ -737,7 +755,7 @@ BEGIN
 
     INSERT INTO show_hospital_aggregate_usage_result
 -- Type solution below
-	SELECT * FROM User;
+    SELECT * FROM User;
 -- End of solution
 END //
 DELIMITER ;
@@ -751,17 +769,17 @@ CREATE PROCEDURE business_search (
     IN i_search_parameter ENUM("name","street", "city", "state", "zip"),
     IN i_search_value VARCHAR(100))
 BEGIN
-	DROP TABLE IF EXISTS business_search_result;
+    DROP TABLE IF EXISTS business_search_result;
     CREATE TABLE business_search_result(
         name VARCHAR(100),
-		address_street VARCHAR(100),
-		address_city VARCHAR(100),
-		address_state VARCHAR(30),
-		address_zip CHAR(5));
+        address_street VARCHAR(100),
+        address_city VARCHAR(100),
+        address_state VARCHAR(30),
+        address_zip CHAR(5));
 
     INSERT INTO business_search_result
 -- Type solution below
-	SELECT * FROM User;
+    SELECT * FROM User;
 -- End of solution
 END //
 DELIMITER ;
@@ -802,9 +820,9 @@ DROP TABLE IF EXISTS get_user_types_result;
     CREATE TABLE get_user_types_result(
         username VARCHAR(100),
         UserType VARCHAR(50));
-	INSERT INTO get_user_types_result
+    INSERT INTO get_user_types_result
 -- Type solution below
-	SELECT * FROM User;
+    SELECT * FROM User;
 -- End of solution
 END //
 DELIMITER ;
