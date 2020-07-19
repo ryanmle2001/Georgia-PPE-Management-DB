@@ -7,7 +7,7 @@ Team ##
 Team Member Name (GT username)
 Team Member Name (GT username)
 Team Member Name (GT username)
-azhao63
+Team Member Name (GT username)
 
 Directions:
 Please follow all instructions from the Phase III assignment PDF.
@@ -54,14 +54,7 @@ CREATE PROCEDURE add_usage_log(
 )
 BEGIN
 -- Type solution below
-		IF (i_usage_log_id NOT IN (
-		SELECT id FROM usagelog )
-        AND
-        i_doctor_username NOT IN (
-        SELECT username FROM doctor))
-    THEN INSERT INTO usagelog (id, doctor, timestamp)
-		VALUES (i_usage_log_id, i_doctor_username, i_timestamp);
-	END IF;
+
 -- End of solution
 END //
 DELIMITER ;
@@ -78,23 +71,7 @@ CREATE PROCEDURE add_usage_log_entry(
 )
 BEGIN
 -- Type solution below
-	IF (i_usage_log_id NOT IN (
-		SELECT id FROM usagelog )
-        AND
-        concat(i_usage_log_id, i_product_id) NOT IN (
-        SELECT concat(usage_log_id, product_id) FROM usagelogentry)
-        AND
-        count > (SELECT count FROM inventoryhasproduct WHERE 
-			(SELECT hospital FROM doctor WHERE username = (SELECT doctor FROM usagelog WHERE i_usage_log_id = id)) = inventory_business
-			AND
-            i_product_id = product_id)
-        )
-    THEN INSERT INTO usagelog (id, doctor, timestamp)
-		VALUES (i_usage_log_id, i_doctor_username, i_timestamp);
-        UPDATE inventoryhasproduct SET count = count - i_count WHERE 
-			(SELECT hospital FROM doctor WHERE username = (SELECT doctor FROM usagelog WHERE i_usage_log_id = id)) = inventory_business
-			AND i_product_id = product_id;
-	END IF;
+
 -- End of solution
 END //
 DELIMITER ;
@@ -121,35 +98,7 @@ CREATE PROCEDURE add_business(
 )
 BEGIN
 -- Type solution below
-	IF (i_name NOT IN ( -- you may have to add not null statements here
-		SELECT name FROM business )
-        AND
-        concat(i_BusinessStreet, i_BusinessCity, i_BusinessState, i_BusinessZip) NOT IN (
-        SELECT concat(address_street, address_city, address_state, address_zip) FROM business)
-        AND
-        i_businessType = 'Hospital')
-    THEN INSERT INTO business (name, address_street, address_city, address_state, address_zip)
-		VALUES (i_name, i_BusinessStreet, i_BusinessCity, i_BusinessState, i_BusinessZip);
-        INSERT INTO hospital (name, max_doctors, budget)
-        VALUES (i_name, i_maxDoctors, i_budget); 
-        INSERT INTO invetory (owner, address_street, address_city, address_state, address_zip) -- you may have to add not null statements here
-        VALUES (i_name, i_InventoryStreet, i_InventoryCity, i_InventoryState, i_InventoryZip);
-	END IF;
-    
-    IF (i_name NOT IN ( -- you may have to add not null statements here
-		SELECT name FROM business )
-        AND
-        concat(i_BusinessStreet, i_BusinessCity, i_BusinessState, i_BusinessZip) NOT IN (
-        SELECT concat(address_street, address_city, address_state, address_zip) FROM business)
-        AND
-        i_businessType = 'Manufacturer')
-    THEN INSERT INTO business (name, address_street, address_city, address_state, address_zip)
-		VALUES (i_name, i_BusinessStreet, i_BusinessCity, i_BusinessState, i_BusinessZip);
-        INSERT INTO manufacturer (name, catalog_capacity)
-        VALUES (i_name, i_catalog_capacity); 
-        INSERT INTO invetory (owner, address_street, address_city, address_state, address_zip) -- you may have to add not null statements here
-        VALUES (i_name, i_InventoryStreet, i_InventoryCity, i_InventoryState, i_InventoryZip);
-	END IF;
+
 -- End of solution
 END //
 DELIMITER ;
@@ -185,26 +134,7 @@ CREATE PROCEDURE add_transaction_item(
     IN i_purchaseCount INT)
 BEGIN
 -- Type solution below
-	IF ((concat(i_transactionId, i_productId, i_manufacturerName) NOT IN (
-        SELECT concat(transaction_id, product_id, manufacturer) FROM contains_item)) -- checking for duplicate entries
-        AND
-        (i_transactionId IN (SELECT t_id FROM transactions)) -- checking if transaction is valid
-        AND
-        ((SELECT budget FROM hospital WHERE (SELECT hospital FROM transactions WHERE t_id = i_transactionId) = hospital_name) > -- checking if hospital can afford
-        ((SELECT price FROM catalog_item WHERE p_id = i_productId) * i_purchaseCount))
-        AND
-        (i_purchaseCount > (SELECT item_count FROM has_item WHERE p_id = i_productId AND business_name = i_manufacturerName)) -- checking if manufacturer has enough inventory
-        )
-    THEN 
-		INSERT INTO contains_item (p_id, t_id, item_count, business_name)
-		VALUES (i_productId, i_transactionId, i_purchaseCount, i_manufacturerName);
-        UPDATE has_item SET item_count = item_count - i_purchaseCount 
-			WHERE i_manufacturerName = business_name AND i_productId = p_id;
-        UPDATE has_item SET item_count = item_count + i_purchaseCount 
-			WHERE (SELECT hospital FROM transactions WHERE t_id = i_transactionId) = hospital_name AND i_productId = p_id;
-        UPDATE hospital SET budget = budget - ((SELECT price FROM catalog_item WHERE p_id = i_productId) * i_purchaseCount) 
-			WHERE (SELECT hospital FROM transactions WHERE t_id = i_transactionId) = hospital_name;
-	END IF;
+
 -- End of solution
 END //
 DELIMITER ;
@@ -226,29 +156,7 @@ CREATE PROCEDURE add_user(
 )
 BEGIN
 -- Type solution below
-	IF (i_username NOT IN (
-		SELECT username FROM user )
-        AND
-        i_email NOT IN (
-        SELECT email FROM user))
-    THEN 
-		INSERT INTO user (username, email, password, fname, lname)
-		VALUES (i_username, i_email, SHA(i_password), i_fname, i_lname);
-			IF ((i_userType = 'Doctor') AND (i_workingHospital IN (SELECT name FROM hospital)))
-            THEN INSERT INTO doctor (username, hospital, manager)
-				VALUES (i_username, i_workingHospital, null); -- (SELECT username FROM administrator WHERE business = i_workingHospital)); -- this should auto null?, what about manager?
-			END IF;
-            IF ((i_userType = 'Admin') AND (i_managingBusiness IN (SELECT name FROM business))) 
-            THEN INSERT INTO administrator (username, business)
-				VALUES (i_username, i_workingHospital);
-			END IF;
-            IF ((i_userType = 'Doctor-Admin') AND (i_managingBusiness IN (SELECT name FROM business)) AND (i_workingHospital IN (SELECT name FROM hospital)))
-            THEN INSERT INTO doctor (username, hospital, manager)
-				VALUES (i_username, i_workingHospital, null); -- look at above comment
-                INSERT INTO administrator (username, business)
-				VALUES (i_username, i_workingHospital);
-			END IF;
-		END IF;
+
 -- End of solution
 END //
 DELIMITER ;
@@ -265,14 +173,7 @@ CREATE PROCEDURE add_catalog_item(
 )
 BEGIN
 -- Type solution below
-	IF (i_manufacturerName IN (
-		SELECT name FROM manufacturer)
-        AND
-        (SELECT catalog_capacity FROM manufacturer WHERE i_manufacturerName = name) > 
-        (SELECT count(product_id) FROM inventoryhasproduct WHERE i_manufacturerName = inventory_business))
-    THEN INSERT INTO catalogitem (manufacturer, product_id, price)
-		VALUES (i_manufacturerName, i_product_id, i_price);
-	END IF;
+
 -- End of solution
 END //
 DELIMITER ;
@@ -289,14 +190,7 @@ CREATE PROCEDURE add_product(
 )
 BEGIN
 -- Type solution below
-	IF ((i_prod_id NOT IN (
-		SELECT id FROM product )) 
-        AND 
-        (concat(i_color, i_name) NOT IN (
-        SELECT concat(name_color, name_type) FROM product)))
-    THEN INSERT INTO product (id, name_color, name_type)
-		VALUES (i_prod_id, i_color, i_name);
-	END IF;
+
 -- End of solution
 END //
 DELIMITER ;
@@ -315,8 +209,7 @@ CREATE PROCEDURE delete_product(
 )
 BEGIN
 -- Type solution below
-	-- DELETE from inventoryhasproduct where product_id = i_product_id;
-	DELETE from product where id = i_product_id;
+
 -- End of solution
 END //
 DELIMITER ;
@@ -329,7 +222,7 @@ DELIMITER //
 CREATE PROCEDURE delete_zero_inventory()
 BEGIN
 -- Type solution below
-	DELETE from inventoryhasproduct where count = 0;
+
 -- End of solution
 END //
 DELIMITER ;
@@ -359,7 +252,7 @@ CREATE PROCEDURE delete_user(
 )
 BEGIN
 -- Type solution below
-	DELETE FROM User where i_username = username;
+
 -- End of solution
 END //
 DELIMITER ;
@@ -375,13 +268,13 @@ CREATE PROCEDURE delete_catalog_item(
 )
 BEGIN
 -- Type solution below
-	DELETE FROM catalogitem where manufacturer = i_manufacturer_name AND product_id = i_product_id;
+
 -- End of solution
 END //
 DELIMITER ;
 
 
-+/************** UPDATES **************/
+/************** UPDATES **************/
 
 -- Number: U1
 -- Author: kachtani3@
@@ -603,26 +496,7 @@ BEGIN
 
     INSERT INTO hospital_transactions_report_result
 -- Type solution below
-	select id, TransactionItem.manufacturer, Transaction.hospital, sum(price * TransactionItem.count) as total_price , Transaction.date
-	from Transaction, TransactionItem, CatalogItem
-	where Transaction.hospital = i_hospital
-	and Transaction.id = TransactionItem.transaction_id
-	and TransactionItem.product_id = CatalogItem.product_id
-	and CatalogItem.manufacturer = TransactionItem.manufacturer
-	group by id, TransactionItem.manufacturer
-	order by 
-		case 
-			when i_sortDirection = "DESC" and i_sortBy = "id" then id
-		end DESC,
-		case 
-			when i_sortDirection = "DESC" and i_sortBy = "date" then Transaction.date
-		end DESC,
-		case 
-			when i_sortDirection = "ASC" and i_sortBy = "id" then id
-		end ASC,
-		case 
-			when i_sortDirection = "ASC" and i_sortBy = "date" then Transaction.date
-		end ASC;
+	SELECT * FROM User;
 -- End of solution
 END //
 DELIMITER ;
@@ -672,11 +546,7 @@ BEGIN
 
     INSERT INTO product_usage_list_result
 -- Type solution below
-    select Product.id as product_id, name_color as product_color, name_type as product_type, IFNULL(sum(UsageLogEntry.count),0) as num
-	from Product
-    left outer join UsageLogEntry on Product.id = UsageLogEntry.product_id
-	group by id
-	order by num DESC;
+    SELECT * FROM User;
 -- End of solution
 END //
 DELIMITER ;
@@ -698,16 +568,7 @@ BEGIN
 
     INSERT INTO hospital_total_expenditure_result
 -- Type solution below
-	select Transaction.hospital as hospitalName, sum(T.totalExpenditure) as totalExpenditure, count(*) as transaction_count, round(sum(T.totalExpenditure)/count(*), 2) as avg_cost
-	from Transaction join
-	(select Transaction.id as id, Transaction.hospital as hospitalName, sum(TransactionItem.count * CatalogItem.price) as totalExpenditure
-	from Transaction, TransactionItem, CatalogItem
-	where Transaction.id = TransactionItem.transaction_id
-	and CatalogItem.product_id = TransactionItem.product_id
-	and TransactionItem.manufacturer = CatalogItem.manufacturer
-	group by Transaction.id, hospitalName) as T
-	on Transaction.hospital = T.hospitalName and Transaction.id = T.id
-	group by Transaction.hospital;
+	SELECT * FROM User;
 -- End of solution
 END //
 DELIMITER ;
@@ -730,12 +591,7 @@ BEGIN
 
     INSERT INTO manufacturer_catalog_report_result
 -- Type solution below
-	select Product.name_color, Product.name_type, CatalogItem.price, IFNULL(TransactionItem.count,0) as num_sold, CatalogItem.price * IFNULL(TransactionItem.count, 0) as revenue
-	from CatalogItem
-	left outer join TransactionItem on CatalogItem.manufacturer = TransactionItem.manufacturer and CatalogItem.product_id = TransactionItem.product_id
-	join Product on Product.id = CatalogItem.product_id
-	where CatalogItem.manufacturer = i_manufacturer 
-	order by revenue DESC;
+	SELECT * FROM User;
 -- End of solution
 END //
 DELIMITER ;
@@ -758,11 +614,7 @@ BEGIN
 
     INSERT INTO doctor_subordinate_usage_log_report_result
 -- Type solution below
-	select UsageLog.id as id, Doctor.username as doctor, UsageLog.timestamp as timestamp, UsageLogEntry.product_id, UsageLogEntry.count as count
-	from Doctor, UsageLog, UsageLogEntry
-	where (Doctor.manager = i_drUsername or Doctor.username = i_drUsername)
-	and Doctor.username = UsageLog.doctor
-	and UsageLog.id = UsageLogEntry.usage_log_id;
+	SELECT * FROM User;
 -- End of solution
 END //
 DELIMITER ;
@@ -783,11 +635,7 @@ BEGIN
 
     INSERT INTO explore_product_result
 -- Type solution below
-    select CatalogItem.manufacturer as manufacturer, InventoryHasProduct.count as count, CatalogItem.price as price
-	from InventoryHasProduct 
-	join CatalogItem on InventoryHasProduct.inventory_business = CatalogItem.manufacturer
-	and InventoryHasProduct.product_id = CatalogItem.product_id
-	where InventoryHasProduct.product_id = i_product_id;
+    SELECT * FROM User;
 -- End of solution
 END //
 DELIMITER ;
@@ -808,28 +656,7 @@ BEGIN
 
     INSERT INTO show_product_usage_result
 -- Type solution below
-	select I.product_id, sum(ifnull(U.count, 0)) as num_used, sum(ifnull(I.count, 0)) as num_avaliable,  round(sum(ifnull(U.count, 0)) / sum(ifnull(I.count, 0)), 2) as ratio
-	from 
-	(select product_id, sum(count) as count 
-	from InventoryHasProduct
-	where inventory_business in (select distinct name from Manufacturer)
-	group by product_id) as I
-	left outer join 
-	(select product_id, sum(count) as count 
-	from UsageLogEntry
-	group by product_id) as U
-	on I.product_id = U.product_id
-	group by product_id
-	union 
-	SELECT distinct InventoryHasProduct.product_id, IFNULL(UsageLogEntry.count, 0) as num_used, 0 as num_available, 0 as ratio 
-	FROM ga_ppe.InventoryHasProduct
-	left outer join UsageLogEntry
-	on InventoryHasProduct.product_id = UsageLogEntry.product_id
-	where inventory_business not in (select name from manufacturer)
-	and InventoryHasProduct.product_id not in
-	(select distinct product_id from InventoryHasProduct 
-	where inventory_business in 
-	(select name from manufacturer));
+	SELECT * FROM User;
 -- End of solution
 END //
 DELIMITER ;
@@ -848,12 +675,7 @@ BEGIN
 
     INSERT INTO show_hospital_aggregate_usage_result
 -- Type solution below
-	select Doctor.hospital, sum(UsageLogEntry.count) as products_used
-	from UsageLog 
-	join Doctor on Doctor.username = UsageLog.doctor
-	join UsageLogEntry on UsageLog.id = UsageLogEntry.usage_log_id
-	group by Doctor.hospital
-	order by Doctor.hospital asc; 
+	SELECT * FROM User;
 -- End of solution
 END //
 DELIMITER ;
@@ -877,12 +699,7 @@ BEGIN
 
     INSERT INTO business_search_result
 -- Type solution below
-	select * from Business
-	where (i_search_parameter = "name" and Business.name like concat("%",i_search_value,"%")) 
-	or (i_search_parameter = "street" and Business.address_street like concat("%",i_search_value,"%"))
-	or (i_search_parameter = "city" and Business.address_city like concat("%",i_search_value,"%"))
-	or (i_search_parameter = "state" and Business.address_state like concat("%",i_search_value,"%"))
-	or (i_search_parameter = "zip" and Business.address_zip like concat("%",i_search_value,"%"));
+	SELECT * FROM User;
 -- End of solution
 END //
 DELIMITER ;
@@ -906,12 +723,7 @@ BEGIN
 
     INSERT INTO manufacturer_transaction_report_result
 -- Type solution below
-    select TransactionItem.transaction_id as id, Transaction.hospital as hospital, Transaction.date, sum(CatalogItem.price * TransactionItem.count) as cost, sum(TransactionItem.count) as total_count
-	from TransactionItem 
-	join Transaction on TransactionItem.transaction_id = Transaction.id
-	join CatalogItem on TransactionItem.product_id = CatalogItem.product_id and TransactionItem.manufacturer = CatalogItem.manufacturer
-	where TransactionItem.manufacturer = i_manufacturer
-	group by TransactionItem.transaction_id;
+    SELECT * FROM User;
 -- End of solution
 END //
 DELIMITER ;
@@ -930,11 +742,7 @@ DROP TABLE IF EXISTS get_user_types_result;
         UserType VARCHAR(50));
 	INSERT INTO get_user_types_result
 -- Type solution below
-	SELECT username, 'Doctor' FROM doctor;
-    UPDATE get_user_types_result SET UserType = concat(UserType, '-Admin') where get_user_types_result.username in (select username from administrator);
-    UPDATE get_user_types_result SET UserType = concat(UserType, '-Manager') where get_user_types_result.username in (select manager from doctor);
-    INSERT INTO get_user_types_result
-	SELECT administrator.username, 'Admin' FROM administrator where administrator.username not in (SELECT get_user_types_result.username from get_user_types_result);
+	SELECT * FROM User;
 -- End of solution
 END //
 DELIMITER ;

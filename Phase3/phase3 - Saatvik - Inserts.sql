@@ -412,6 +412,23 @@ CREATE PROCEDURE add_subtract_inventory(
 )
 BEGIN
 -- Type solution below
+if abs(i_delta) <= (select count from inventoryhasproduct where inventory_business = i_businessName and product_id = i_prod_id) then
+	if i_delta > 0 then
+			update inventoryhasproduct
+			set count = count + i_delta
+			where inventory_business = i_businessName
+			and product_id = i_prod_id;
+	end if;
+
+	if i_delta < 0 then
+			update inventoryhasproduct
+			set count = count - i_delta
+			where inventory_business = i_businessName
+			and product_id = i_prod_id;
+	end if;
+end if;
+
+call delete_zero_inventory();
 
 -- End of solution
 END //
@@ -429,7 +446,18 @@ CREATE PROCEDURE move_inventory(
     IN i_count INT)
 BEGIN
 -- Type solution below
-
+if (select count from inventoryhasproduct where inventory_business = i_supplierName and product_id = i_productId) >= i_count then
+	## subtract product from supplier 
+    update inventoryhasproduct
+    set count = count - i_count
+    where inventory_business = i_supplierName and product_id = i_productId;
+    
+    ## add product to the consumer
+    update inventoryhasproduct
+    set count = count + i_count
+    where inventory_business = i_consumerName and product_id = i_productId;
+end if;
+call delete_zero_inventory();
 -- End of solution
 END //
 DELIMITER ;
@@ -445,7 +473,9 @@ CREATE PROCEDURE rename_productransaction_id(
 )
 BEGIN
 -- Type solution below
-
+update product
+set id = i_new_product_id
+where id = i_product_id;
 -- End of solution
 END //
 DELIMITER ;
@@ -464,7 +494,9 @@ CREATE PROCEDURE update_business_address(
 )
 BEGIN
 -- Type solution below
-
+update business
+set address_street = i_address_street and address_city = i_address_city and address_zip = i_address_zip
+where name = i_name;
 -- End of solution
 END //
 DELIMITER ;
@@ -479,7 +511,11 @@ CREATE PROCEDURE charge_hospital(
     IN i_amount FLOAT(2))
 BEGIN
 -- Type solution below
-
+if i_amount <= (select budget from hospital where name = i_hospital_name) then
+	update hospital
+    set budget = budget - i_amount
+    where name = i_hospital_name;
+end if;
 -- End of solution
 END //
 DELIMITER ;
@@ -495,7 +531,11 @@ CREATE PROCEDURE update_business_admin(
 )
 BEGIN
 -- Type solution below
-
+if (select count(username) from administrator where business = i_business_name group by business) > 1 then
+	update administator
+	set business = i_business_name
+	where username = i_admin_username;
+end if;
 -- End of solution
 END //
 DELIMITER ;
@@ -530,7 +570,9 @@ CREATE PROCEDURE update_user_password(
 )
 BEGIN
 -- Type solution below
-
+update user
+set password = SHA(i_new_password)
+where username = i_username;
 -- End of solution
 END //
 DELIMITER ;
@@ -545,7 +587,9 @@ CREATE PROCEDURE batch_update_catalogitem(
     IN i_factor FLOAT(2))
 BEGIN
 -- Type solution below
-
+update catalogitem
+set price = price * i_factor
+where manufacturer = i_manufacturer_name;
 -- End of solution
 END //
 DELIMITER ;
