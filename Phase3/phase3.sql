@@ -873,7 +873,10 @@ DROP TABLE IF EXISTS get_user_types_result;
         UserType VARCHAR(50));
 	INSERT INTO get_user_types_result
 -- Type solution below
-	SELECT * FROM User;
+	SELECT username, 'Doctor' FROM doctor;
+    UPDATE get_user_types_result SET UserType = concat(UserType, '-Admin') where get_user_types_result.username in (select username from administrator);
+    UPDATE get_user_types_result SET UserType = concat(UserType, '-Manager') where get_user_types_result.username in (select manager from doctor);
+	SELECT username, 'Admin' FROM administrator where username not in (SELECT username from get_user_types_result);
 -- End of solution
 END //
 DELIMITER ;
