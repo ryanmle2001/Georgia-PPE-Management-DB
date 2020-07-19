@@ -628,9 +628,9 @@ BEGIN
 
     INSERT INTO product_usage_list_result
 -- Type solution below
-    select Product.id as product_id, name_color as product_color, name_type as product_type, sum(UsageLogEntry.count) as num
-	from Product, UsageLogEntry
-	where Product.id = UsageLogEntry.product_id
+    select Product.id as product_id, name_color as product_color, name_type as product_type, IFNULL(sum(UsageLogEntry.count),0) as num
+	from Product
+    left outer join UsageLogEntry on Product.id = UsageLogEntry.product_id
 	group by id
 	order by num DESC;
 -- End of solution
@@ -654,7 +654,7 @@ BEGIN
 
     INSERT INTO hospital_total_expenditure_result
 -- Type solution below
-	select Transaction.hospital as hospitalName, sum(T.totalExpenditure) as totalExpenditure, count(*) as transaction_count, sum(T.totalExpenditure)/count(*) as avg_cost
+	select Transaction.hospital as hospitalName, sum(T.totalExpenditure) as totalExpenditure, count(*) as transaction_count, round(sum(T.totalExpenditure)/count(*), 2) as avg_cost
 	from Transaction join
 	(select Transaction.id as id, Transaction.hospital as hospitalName, sum(TransactionItem.count * CatalogItem.price) as totalExpenditure
 	from Transaction, TransactionItem, CatalogItem
@@ -663,7 +663,7 @@ BEGIN
 	and TransactionItem.manufacturer = CatalogItem.manufacturer
 	group by Transaction.id, hospitalName) as T
 	on Transaction.hospital = T.hospitalName and Transaction.id = T.id
-	group by hospitalName;
+	group by Transaction.hospital;
 -- End of solution
 END //
 DELIMITER ;
@@ -764,19 +764,28 @@ BEGIN
 
     INSERT INTO show_product_usage_result
 -- Type solution below
-	select Inventory.product_id, sum(ifnull(UsageLog.count, 0)) as num_used, sum(ifnull(Inventory.count, 0)) as num_avaliable,  sum(ifnull(UsageLog.count, 0)) / sum(ifnull(Inventory.count, 0)) as ratio
+	select I.product_id, sum(ifnull(U.count, 0)) as num_used, sum(ifnull(I.count, 0)) as num_avaliable,  round(sum(ifnull(U.count, 0)) / sum(ifnull(I.count, 0)), 2) as ratio
 	from 
 	(select product_id, sum(count) as count 
 	from InventoryHasProduct
-	where inventory_business in (select distinct manufacturer from CatalogItem)
-	group by product_id
-	order by product_id) as Inventory
+	where inventory_business in (select distinct name from Manufacturer)
+	group by product_id) as I
 	left outer join 
 	(select product_id, sum(count) as count 
 	from UsageLogEntry
-	group by product_id) as UsageLog
-	on Inventory.product_id = UsageLog.product_id
-	group by product_id; 
+	group by product_id) as U
+	on I.product_id = U.product_id
+	group by product_id
+	union 
+	SELECT distinct InventoryHasProduct.product_id, IFNULL(UsageLogEntry.count, 0) as num_used, 0 as num_available, 0 as ratio 
+	FROM ga_ppe.InventoryHasProduct
+	left outer join UsageLogEntry
+	on InventoryHasProduct.product_id = UsageLogEntry.product_id
+	where inventory_business not in (select name from manufacturer)
+	and InventoryHasProduct.product_id not in
+	(select distinct product_id from InventoryHasProduct 
+	where inventory_business in 
+	(select name from manufacturer));
 -- End of solution
 END //
 DELIMITER ;
@@ -853,12 +862,12 @@ BEGIN
 
     INSERT INTO manufacturer_transaction_report_result
 -- Type solution below
-    select TransactionItem.transaction_id as id, Transaction.hospital as hospital, sum(CatalogItem.price * TransactionItem.count) as cost, sum(TransactionItem.count) as total_count
+    select TransactionItem.transaction_id as id, Transaction.hospital as hospital, Transaction.date, sum(CatalogItem.price * TransactionItem.count) as cost, sum(TransactionItem.count) as total_count
 	from TransactionItem 
 	join Transaction on TransactionItem.transaction_id = Transaction.id
 	join CatalogItem on TransactionItem.product_id = CatalogItem.product_id and TransactionItem.manufacturer = CatalogItem.manufacturer
 	where TransactionItem.manufacturer = i_manufacturer
-	group by id;
+	group by TransactionItem.transaction_id;
 -- End of solution
 END //
 DELIMITER ;
@@ -877,7 +886,11 @@ DROP TABLE IF EXISTS get_user_types_result;
         UserType VARCHAR(50));
 	INSERT INTO get_user_types_result
 -- Type solution below
-	SELECT * FROM User;
+	SELECT username, 'Doctor' FROM doctor;
+    UPDATE get_user_types_result SET UserType = concat(UserType, '-Admin') where get_user_types_result.username in (select username from administrator);
+    UPDATE get_user_types_result SET UserType = concat(UserType, '-Manager') where get_user_types_result.username in (select manager from doctor);
+    INSERT INTO get_user_types_result
+	SELECT administrator.username, 'Admin' FROM administrator where administrator.username not in (SELECT get_user_types_result.username from get_user_types_result);
 -- End of solution
 END //
 DELIMITER ;

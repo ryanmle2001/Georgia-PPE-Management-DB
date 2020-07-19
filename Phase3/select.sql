@@ -118,17 +118,20 @@ BEGIN
 
     INSERT INTO hospital_total_expenditure_result
 -- Type solution below
-	select Transaction.hospital as hospitalName, sum(T.totalExpenditure) as totalExpenditure, count(*) as transaction_count, sum(T.totalExpenditure)/count(*) as avg_cost
-	from Transaction join
-	(select Transaction.id as id, Transaction.hospital as hospitalName, sum(TransactionItem.count * CatalogItem.price) as totalExpenditure
+	select Transaction.hospital as hospitalName, sum(TransactionItem.count * CatalogItem.price) as totalExpenditure, count(*) as transaction_count, avg(TransactionItem.count * CatalogItem.price)
 	from Transaction, TransactionItem, CatalogItem
 	where Transaction.id = TransactionItem.transaction_id
 	and CatalogItem.product_id = TransactionItem.product_id
 	and TransactionItem.manufacturer = CatalogItem.manufacturer
+<<<<<<< HEAD
+	group by hospitalName;
+-- End of solution
+=======
 	group by Transaction.id, hospitalName) as T
 	on Transaction.hospital = T.hospitalName and Transaction.id = T.id
-	group by hospitalName;
+	group by Transaction.hospital;
     -- End of solution
+>>>>>>> ryan
 END //
 DELIMITER ;
 
