@@ -127,7 +127,7 @@ BEGIN
 	and TransactionItem.manufacturer = CatalogItem.manufacturer
 	group by Transaction.id, hospitalName) as T
 	on Transaction.hospital = T.hospitalName and Transaction.id = T.id
-	group by hospitalName;
+	group by Transaction.hospital;
     -- End of solution
 END //
 DELIMITER ;
