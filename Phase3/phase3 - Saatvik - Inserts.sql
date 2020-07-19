@@ -78,22 +78,21 @@ CREATE PROCEDURE add_usage_log_entry(
 )
 BEGIN
 -- Type solution below
-    IF (i_usage_log_id NOT IN (
+    IF (i_usage_log_id IN ( -- checking if usagelog exists
         SELECT id FROM usagelog )
         AND
-        concat(i_usage_log_id, i_product_id) NOT IN (
+        concat(i_usage_log_id, i_product_id) NOT IN ( -- checking for duplicates
         SELECT concat(usage_log_id, product_id) FROM usagelogentry)
         AND
-        i_count < (SELECT count FROM inventoryhasproduct WHERE 
-            (SELECT username FROM doctor WHERE username = (SELECT doctor FROM usagelog WHERE i_usage_log_id = id))
-            AND
+        i_count < (SELECT count FROM inventoryhasproduct WHERE inventory_business = (SELECT hospital FROM doctor WHERE username = (SELECT doctor FROM usagelog WHERE i_usage_log_id = id)) AND
             i_product_id = product_id)
         )
-    THEN INSERT INTO usagelog (id, doctor, timestamp)
-        VALUES (i_usage_log_id, i_doctor_username, i_timestamp);
+    THEN 
+        INSERT INTO usagelogentry (usage_log_id, product_id, count)
+        VALUES (i_usage_log_id, i_product_id, i_count);
         UPDATE inventoryhasproduct SET count = count - i_count WHERE 
-            (SELECT hospital FROM doctor WHERE username = (SELECT doctor FROM usage_log WHERE i_usage_log_id = id)) = inventory_business
-            AND i_product_id= product_id;
+            (SELECT hospital FROM doctor WHERE username = (SELECT doctor FROM usagelog WHERE i_usage_log_id = id)) = inventory_business
+            AND i_product_id = product_id;
     END IF;
 -- End of solution
 END //
@@ -203,7 +202,6 @@ BEGIN
         (i_purchaseCount <= (SELECT count FROM inventoryhasproduct WHERE (product_id = i_productId AND inventory_business = i_manufacturerName))) -- checking if manufacturer has enough inventory
          )
     THEN 
-        SELECT 'hello';
         INSERT INTO transactionitem (product_id, transaction_id, count, manufacturer)
         VALUES (i_productId, i_transactionId, i_purchaseCount, i_manufacturerName);
         UPDATE inventoryhasproduct SET count = count - i_purchaseCount 
