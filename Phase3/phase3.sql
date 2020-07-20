@@ -128,7 +128,7 @@ BEGIN
         SELECT name FROM business )
         AND
         i_name IS NOT NULL AND i_BusinessStreet IS NOT NULL AND i_BusinessCity IS NOT NULL AND i_BusinessState IS NOT NULL AND i_BusinessZip IS NOT NULL AND
-        max_doctors IS NOT NULL AND budget IS NOT NULL AND
+        i_maxDoctors IS NOT NULL AND i_budget IS NOT NULL AND
         i_InventoryStreet IS NOT NULL AND i_InventoryCity IS NOT NULL AND i_InventoryState IS NOT NULL AND i_InventoryZip AND
         concat(i_BusinessStreet, i_BusinessCity, i_BusinessState, i_BusinessZip) NOT IN (
         SELECT concat(address_street, address_city, address_state, address_zip) FROM business)
@@ -146,7 +146,7 @@ BEGIN
         SELECT name FROM business )
         AND
         i_name IS NOT NULL AND i_BusinessStreet IS NOT NULL AND i_BusinessCity IS NOT NULL AND i_BusinessState IS NOT NULL AND i_BusinessZip IS NOT NULL AND
-        catalog_capacity IS NOT NULL AND
+        i_catalog_capacity IS NOT NULL AND
         i_InventoryStreet IS NOT NULL AND i_InventoryCity IS NOT NULL AND i_InventoryState IS NOT NULL AND i_InventoryZip AND
         concat(i_BusinessStreet, i_BusinessCity, i_BusinessState, i_BusinessZip) NOT IN (
         SELECT concat(address_street, address_city, address_state, address_zip) FROM business)
@@ -156,7 +156,7 @@ BEGIN
         VALUES (i_name, i_BusinessStreet, i_BusinessCity, i_BusinessState, i_BusinessZip);
         INSERT INTO manufacturer (name, catalog_capacity)
         VALUES (i_name, i_catalog_capacity); 
-        INSERT INTO invetory (owner, address_street, address_city, address_state, address_zip) -- you may have to add not null statements here
+        INSERT INTO inventory (owner, address_street, address_city, address_state, address_zip) -- you may have to add not null statements here
         VALUES (i_name, i_InventoryStreet, i_InventoryCity, i_InventoryState, i_InventoryZip);
     END IF;
 -- End of solution
