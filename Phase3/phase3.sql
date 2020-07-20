@@ -3,10 +3,10 @@ CS4400: Introduction to Database Systems
 Summer 2020
 Phase III Template
 
-Team ##
-Saatvik Suryajit Korisepati (skorisepati3)
+Team 15
 Ryan Le (rm331)
 Rajit Khanna (rkhanna38)
+Saatvik Suryajit Korisepati (skorisepati3)
 Andrew Zhao (azhao63)
 
 Directions:
@@ -737,16 +737,17 @@ BEGIN
 
     INSERT INTO hospital_total_expenditure_result
 -- Type solution below
-	select Transaction.hospital as hospitalName, sum(T.totalExpenditure) as totalExpenditure, count(*) as transaction_count, round(sum(T.totalExpenditure)/count(*), 2) as avg_cost
-	from Transaction join
-	(select Transaction.id as id, Transaction.hospital as hospitalName, sum(TransactionItem.count * CatalogItem.price) as totalExpenditure
+	select Hospital.name as hospitalName, ifnull(sum(T.totalExpenditure),0) as totalExpenditure, ifnull(count(distinct T.id),0) as transaction_count, round(ifnull(sum(T.totalExpenditure),0)/ ifnull(count(*),1),2) as avg_cost
+	from Hospital 
+    left outer join
+	(select Transaction.id as id, Transaction.hospital as hospitalName, sum(ifnull(TransactionItem.count,0) * ifnull(CatalogItem.price,0)) as totalExpenditure
 	from Transaction, TransactionItem, CatalogItem
 	where Transaction.id = TransactionItem.transaction_id
 	and CatalogItem.product_id = TransactionItem.product_id
 	and TransactionItem.manufacturer = CatalogItem.manufacturer
-	group by Transaction.id, hospitalName) as T
-	on Transaction.hospital = T.hospitalName and Transaction.id = T.id
-	group by Transaction.hospital;
+	group by Transaction.id, hospitalName)  as T
+	on Hospital.name = T.hospitalName -- and Transaction.id = T.id
+	group by Hospital.name;
 -- End of solution
 END //
 DELIMITER ;
@@ -887,13 +888,16 @@ BEGIN
 
     INSERT INTO show_hospital_aggregate_usage_result
 -- Type solution below
-	select Doctor.hospital, sum(UsageLogEntry.count) as products_used
+	select Hospital.name as hospital, ifnull(H.products_used,0) as products_used
+    from Hospital
+    left outer join
+	(select Doctor.hospital as hospital, sum(ifnull(UsageLogEntry.count,0)) as products_used
 	from UsageLog 
 	join Doctor on Doctor.username = UsageLog.doctor
 	join UsageLogEntry on UsageLog.id = UsageLogEntry.usage_log_id
-	group by Doctor.hospital
-	order by Doctor.hospital asc; 
--- End of solution
+	group by Doctor.hospital) as H
+    on Hospital.name = H.hospital
+    order by hospital asc;-- End of solution
 END //
 DELIMITER ;
 
