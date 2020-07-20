@@ -118,20 +118,17 @@ BEGIN
 
     INSERT INTO hospital_total_expenditure_result
 -- Type solution below
-	select Transaction.hospital as hospitalName, sum(TransactionItem.count * CatalogItem.price) as totalExpenditure, count(*) as transaction_count, avg(TransactionItem.count * CatalogItem.price)
+	select Transaction.hospital as hospitalName, sum(T.totalExpenditure) as totalExpenditure, count(*) as transaction_count, sum(T.totalExpenditure)/count(*) as avg_cost
+	from Transaction join
+	(select Transaction.id as id, Transaction.hospital as hospitalName, sum(TransactionItem.count * CatalogItem.price) as totalExpenditure
 	from Transaction, TransactionItem, CatalogItem
 	where Transaction.id = TransactionItem.transaction_id
 	and CatalogItem.product_id = TransactionItem.product_id
 	and TransactionItem.manufacturer = CatalogItem.manufacturer
-<<<<<<< HEAD
-	group by hospitalName;
--- End of solution
-=======
 	group by Transaction.id, hospitalName) as T
 	on Transaction.hospital = T.hospitalName and Transaction.id = T.id
-	group by Transaction.hospital;
-    -- End of solution
->>>>>>> ryan
+	group by hospitalName;
+-- End of solution
 END //
 DELIMITER ;
 
@@ -348,3 +345,73 @@ DROP TABLE IF EXISTS get_user_types_result;
 -- End of solution
 END //
 DELIMITER ;
+
+
+-- S4
+	select Hospital.name as hospitalName, ifnull(sum(T.totalExpenditure),0) as totalExpenditure, ifnull(count(distinct T.id),0) as transaction_count, round(ifnull(sum(T.totalExpenditure),0)/ ifnull(count(*),1),2) as avg_cost
+	from Hospital 
+    left outer join
+	(select Transaction.id as id, Transaction.hospital as hospitalName, sum(ifnull(TransactionItem.count,0) * ifnull(CatalogItem.price,0)) as totalExpenditure
+	from Transaction, TransactionItem, CatalogItem
+	where Transaction.id = TransactionItem.transaction_id
+	and CatalogItem.product_id = TransactionItem.product_id
+	and TransactionItem.manufacturer = CatalogItem.manufacturer
+	group by Transaction.id, hospitalName)  as T
+	on Hospital.name = T.hospitalName -- and Transaction.id = T.id
+	group by Hospital.name;
+
+-- S9
+	select Doctor.hospital, sum(ifnull(UsageLogEntry.count,0)) as products_used
+	from UsageLog 
+	join Doctor on Doctor.username = UsageLog.doctor
+	join UsageLogEntry on UsageLog.id = UsageLogEntry.usage_log_id
+	group by Doctor.hospital
+	order by Doctor.hospital asc; 
+
+	select Hospital.name as hospital, ifnull(H.products_used,0) as products_used
+    from Hospital
+    left outer join
+	(select Doctor.hospital as hospital, sum(ifnull(UsageLogEntry.count,0)) as products_used
+	from UsageLog 
+	join Doctor on Doctor.username = UsageLog.doctor
+	join UsageLogEntry on UsageLog.id = UsageLogEntry.usage_log_id
+	group by Doctor.hospital) as H
+    on Hospital.name = H.hospital
+    order by hospital asc;
+-- S8
+	select I.product_id, sum(ifnull(U.count, 0)) as num_used, sum(ifnull(I.count, 0)) as num_avaliable,  round(sum(ifnull(U.count, 0)) / sum(ifnull(I.count, 0)), 2) as ratio
+	from 
+	(select product_id, sum(count) as count 
+	from InventoryHasProduct
+	where inventory_business in (select distinct name from Manufacturer)
+	group by product_id) as I
+	left outer join 
+	(select product_id, sum(count) as count 
+	from UsageLogEntry
+	group by product_id) as U
+	on I.product_id = U.product_id
+	group by product_id
+	union 
+SELECT distinct InventoryHasProduct.product_id, IFNULL(UsageLogEntry.count, 0) as num_used, 0 as num_available, 0 as ratio 
+FROM ga_ppe.InventoryHasProduct
+left outer join UsageLogEntry
+on InventoryHasProduct.product_id = UsageLogEntry.product_id
+where inventory_business not in (select name from manufacturer)
+and InventoryHasProduct.product_id not in
+(select distinct product_id from InventoryHasProduct 
+where inventory_business in 
+(select name from manufacturer))
+group by Product.id;
+
+
+select Product.id, sum(ifnull(UsageLogEntry.count,0)) as num_used, sum(ifnull(InventoryHasProduct.count, 0)) as num_avaliable, round(sum(ifnull(UsageLogEntry.count, 0)) / sum(ifnull(InventoryHasProduct.count, 0)), 2) as ratio
+from Product
+left outer join UsageLogEntry 
+on Product.id = UsageLogEntry.product_id
+left join InventoryHasProduct
+on Product.id = InventoryHasProduct.product_id
+where InventoryHasProduct.inventory_business in 
+(select name from manufacturer)
+group by id; 
+
+
