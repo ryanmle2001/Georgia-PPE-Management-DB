@@ -4,10 +4,10 @@ Summer 2020
 Phase III Template
 
 Team ##
-Team Member Name (GT username)
-Team Member Name (GT username)
-Team Member Name (GT username)
-azhao63
+Saatvik Suryajit Korisepati (skorisepati3)
+Ryan Le (rm331)
+Rajit Khanna (rkhanna38)
+Andrew Zhao (azhao63)
 
 Directions:
 Please follow all instructions from the Phase III assignment PDF.
@@ -57,6 +57,8 @@ BEGIN
     IF (i_usage_log_id NOT IN (
         SELECT id FROM usagelog )
         AND
+        i_timestamp IS NOT NULL
+        AND
         i_doctor_username IN (
         SELECT username FROM doctor))
     THEN INSERT INTO usagelog (id, doctor, timestamp)
@@ -80,6 +82,8 @@ BEGIN
 -- Type solution below
     IF (i_usage_log_id IN ( -- checking if usagelog exists
         SELECT id FROM usagelog )
+        AND
+        i_product_id IS NOT NULL AND i_count IS NOT NULL 
         AND
         concat(i_usage_log_id, i_product_id) NOT IN ( -- checking for duplicates
         SELECT concat(usage_log_id, product_id) FROM usagelogentry)
@@ -120,9 +124,12 @@ CREATE PROCEDURE add_business(
 )
 BEGIN
 -- Type solution below
-    IF (i_name NOT IN ( -- you may have to add not null statements here
+        IF (i_name NOT IN ( -- you may have to add not null statements here
         SELECT name FROM business )
         AND
+        i_name IS NOT NULL AND i_BusinessStreet IS NOT NULL AND i_BusinessCity IS NOT NULL AND i_BusinessState IS NOT NULL AND i_BusinessZip IS NOT NULL AND
+        max_doctors IS NOT NULL AND budget IS NOT NULL AND
+        i_InventoryStreet IS NOT NULL AND i_InventoryCity IS NOT NULL AND i_InventoryState IS NOT NULL AND i_InventoryZip AND
         concat(i_BusinessStreet, i_BusinessCity, i_BusinessState, i_BusinessZip) NOT IN (
         SELECT concat(address_street, address_city, address_state, address_zip) FROM business)
         AND
@@ -131,13 +138,16 @@ BEGIN
         VALUES (i_name, i_BusinessStreet, i_BusinessCity, i_BusinessState, i_BusinessZip);
         INSERT INTO hospital (name, max_doctors, budget)
         VALUES (i_name, i_maxDoctors, i_budget); 
-        INSERT INTO invetory (owner, address_street, address_city, address_state, address_zip) -- you may have to add not null statements here
+        INSERT INTO inventory (owner, address_street, address_city, address_state, address_zip) -- you may have to add not null statements here
         VALUES (i_name, i_InventoryStreet, i_InventoryCity, i_InventoryState, i_InventoryZip);
     END IF;
     
     IF (i_name NOT IN ( -- you may have to add not null statements here
         SELECT name FROM business )
         AND
+        i_name IS NOT NULL AND i_BusinessStreet IS NOT NULL AND i_BusinessCity IS NOT NULL AND i_BusinessState IS NOT NULL AND i_BusinessZip IS NOT NULL AND
+        catalog_capacity IS NOT NULL AND
+        i_InventoryStreet IS NOT NULL AND i_InventoryCity IS NOT NULL AND i_InventoryState IS NOT NULL AND i_InventoryZip AND
         concat(i_BusinessStreet, i_BusinessCity, i_BusinessState, i_BusinessZip) NOT IN (
         SELECT concat(address_street, address_city, address_state, address_zip) FROM business)
         AND
@@ -184,8 +194,10 @@ CREATE PROCEDURE add_transaction_item(
     IN i_purchaseCount INT)
 BEGIN
 -- Type solution below
-    IF (
+        IF (
         (concat(i_manufacturerName, i_productId) IN (SELECT concat(inventory_business, product_id) FROM inventoryhasproduct))
+        AND
+        i_transactionID IS NOT NULL AND i_productID IS NOT NULL AND i_manufacturerName IS NOT NULL AND i_purchaseCount IS NOT NULL
         AND
         (concat(i_transactionId, i_productId, i_manufacturerName) NOT IN (
         SELECT concat(transaction_id, product_id, manufacturer) FROM transactionitem)) -- checking for duplicate entries
@@ -235,9 +247,13 @@ BEGIN
     IF (i_username NOT IN (
         SELECT username FROM user )
         AND
+        i_username IS NOT NULL
+        AND
         i_email NOT IN (
         SELECT email FROM user)
         )
+        AND
+        i_email IS NOT NULL
     THEN             
         IF ((i_userType = 1) AND (i_workingHospital IN (SELECT name FROM hospital)))
         THEN 
@@ -284,6 +300,8 @@ BEGIN
     IF (i_manufacturerName IN (
         SELECT name FROM manufacturer)
         AND
+        i_product_id IS NOT NULL AND i_price IS NOT NULL 
+        AND
         (SELECT catalog_capacity FROM manufacturer WHERE i_manufacturerName = name) > 
         (SELECT count(product_id) FROM inventoryhasproduct WHERE i_manufacturerName = inventory_business))
     THEN INSERT INTO catalogitem (manufacturer, product_id, price)
@@ -308,6 +326,12 @@ BEGIN
     IF ((i_prod_id NOT IN (
         SELECT id FROM product )) 
         AND 
+        i_prod_id IS NOT NULL
+        AND
+        i_color IS NOT NULL
+        AND 
+        i_name IS NOT NULL
+        AND
         (concat(i_color, i_name) NOT IN (
         SELECT concat(name_color, name_type) FROM product)))
     THEN INSERT INTO product (id, name_color, name_type)
