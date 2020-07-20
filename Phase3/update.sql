@@ -289,19 +289,10 @@ CREATE PROCEDURE add_subtract_inventory(
 BEGIN
 -- Type solution below
 if abs(i_delta) <= (select count from inventoryhasproduct where inventory_business = i_businessName and product_id = i_prod_id) then
-	if i_delta > 0 then
-			update inventoryhasproduct
-			set count = count + i_delta
-			where inventory_business = i_businessName
-			and product_id = i_prod_id;
-	end if;
-
-	if i_delta < 0 then
-			update inventoryhasproduct
-			set count = count - i_delta
-			where inventory_business = i_businessName
-			and product_id = i_prod_id;
-	end if;
+		update inventoryhasproduct
+		set count = count + i_delta
+		where inventory_business = i_businessName
+		and product_id = i_prod_id;
 end if;
 
 call delete_zero_inventory();
