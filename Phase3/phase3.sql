@@ -465,10 +465,16 @@ if (select count from inventoryhasproduct where inventory_business = i_supplierN
     set count = count - i_count
     where inventory_business = i_supplierName and product_id = i_productId;
     
+    if (select count from inventoryhasproduct where inventory_business = i_consumerName and product_id = i_productId) is not null then
     ## add product to the consumer
-    update inventoryhasproduct
-    set count = count + i_count
-    where inventory_business = i_consumerName and product_id = i_productId;
+		update inventoryhasproduct
+		set count = count + i_count
+		where inventory_business = i_consumerName and product_id = i_productId;
+    end if;
+    
+    if (select count from inventoryhasproduct where inventory_business = i_consumerName and product_id = i_productId) is null then
+		insert into inventoryhasproduct values (i_consumerName, i_productId, i_count);
+    end if;
 end if;
 call delete_zero_inventory();
 -- End of solution
@@ -508,7 +514,15 @@ CREATE PROCEDURE update_business_address(
 BEGIN
 -- Type solution below
 update business
-set address_street = i_address_street and address_city = i_address_city and address_zip = i_address_zip
+set address_street = i_address_street
+where name = i_name;
+
+update business
+set address_city = i_address_city
+where name = i_name;
+
+update business
+set address_zip = i_address_zip
 where name = i_name;
 -- End of solution
 END //
@@ -544,7 +558,7 @@ CREATE PROCEDURE update_business_admin(
 )
 BEGIN
 -- Type solution below
-if (select count(username) from administrator where business = i_business_name group by business) > 1 then
+if (select count(username) from administrator where business = (select business from administrator where username = i_admin_username) group by business) > 1 then
 	update administator
 	set business = i_business_name
 	where username = i_admin_username;
