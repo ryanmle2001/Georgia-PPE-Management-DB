@@ -362,7 +362,15 @@ CREATE PROCEDURE update_business_address(
 BEGIN
 -- Type solution below
 update business
-set address_street = i_address_street and address_city = i_address_city and address_zip = i_address_zip
+set address_street = i_address_street
+where name = i_name;
+
+update business
+set address_city = i_address_city
+where name = i_name;
+
+update business
+set address_zip = i_address_zip
 where name = i_name;
 -- End of solution
 END //
