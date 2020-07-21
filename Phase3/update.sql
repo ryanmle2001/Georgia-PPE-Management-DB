@@ -412,7 +412,7 @@ CREATE PROCEDURE update_business_admin(
 )
 BEGIN
 -- Type solution below
-if (select count(username) from administrator where business = i_business_name group by business) > 1 then
+if (select count(username) from administrator where business = (select business from administrator where username = i_admin_username) group by business) > 1 then
 	update administator
 	set business = i_business_name
 	where username = i_admin_username;
