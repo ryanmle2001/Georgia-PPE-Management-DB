@@ -319,10 +319,16 @@ if (select count from inventoryhasproduct where inventory_business = i_supplierN
     set count = count - i_count
     where inventory_business = i_supplierName and product_id = i_productId;
     
+    if (select count from inventoryhasproduct where inventory_business = i_consumerName and product_id = i_productId) is not null then
     ## add product to the consumer
-    update inventoryhasproduct
-    set count = count + i_count
-    where inventory_business = i_consumerName and product_id = i_productId;
+		update inventoryhasproduct
+		set count = count + i_count
+		where inventory_business = i_consumerName and product_id = i_productId;
+    end if;
+    
+    if (select count from inventoryhasproduct where inventory_business = i_consumerName and product_id = i_productId) is null then
+		insert into inventoryhasproduct values (i_consumerName, i_productId, i_count);
+    end if;
 end if;
 call delete_zero_inventory();
 -- End of solution
